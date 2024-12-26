@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="v1.0.0"
+version="v1.0.1"
 original_ifs="$IFS"
 language="unknown"
 structure_version="v4"
@@ -1803,6 +1803,8 @@ docker-down: chmod ## removes docker service
     ./infra/docker-down.sh
 " "Makefile"
 
+    sed -i 's/^    /\t/' "Makefile"
+
     _extension=""
     _example_domain_1=""
     _example_domain_2=""
@@ -2163,6 +2165,14 @@ import_v4() {
 
     echo ""
 
+    determine_dir_language "$_source_dir"
+
+    if is_equal "$language" "unknown" || is_empty "$language"; then
+        determine_dir_language ""
+    fi
+
+    determine_dir_language_module
+
     IFS=","
 
     set -- $(get_clean_string_from_space "$_common_functions_to_be_imported")
@@ -2271,15 +2281,7 @@ import_v4() {
         remove_dir "$_source_dir"
     fi
 
-    determine_dir_language "$_source_dir"
-
-    if is_equal "$language" "unknown" || is_empty "$language"; then
-        determine_dir_language ""
-    fi
-
     echo "..."
-
-    determine_dir_language_module
 
     set -- $(get_clean_string_from_space "$_external_dependencies_to_be_installed")
 

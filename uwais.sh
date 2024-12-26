@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="v1.0.2"
+version="v1.0.3"
 original_ifs="$IFS"
 language="unknown"
 structure_version="v4"
@@ -922,22 +922,6 @@ func (u *useCaseV1) GetDetailCtx(ctx context.Context, id uint64) (*domain.Exampl
 " "$features_example_dir/usecase_v1.go"
 
         write_to_file "\
-{
-  \"domains\": [
-    \"example.go\"
-  ],
-  \"features\": [],
-  \"commons\": [
-    \"time.go\",
-    \"netHttp.go\",
-    \"response.go\",
-    \"error.go\"
-  ],
-  \"externals\": []
-}
-" "$features_example_dir/dependency.json"
-
-        write_to_file "\
 #!/bin/sh
 
 mkdir tmp || true
@@ -1192,23 +1176,6 @@ class UseCaseV1(ExampleUseCase):
 " "$features_example_dir/usecase_v1.py"
 
         write_to_file "\
-{
-  \"domains\": [
-    \"example.py\"
-  ],
-  \"features\": [],
-  \"commons\": [
-    \"time.py\",
-    \"flask.py\",
-    \"response.py\"
-  ],
-  \"externals\": [
-    \"Flask==3.0.2\"
-  ]
-}
-" "$features_example_dir/dependency.json"
-
-        write_to_file "\
 #!/bin/sh
 
 mkdir tmp || true
@@ -1452,23 +1419,6 @@ export class UseCaseV1 implements ExampleUseCase {
     }
 }
 " "$features_example_dir/usecase_v1.ts"
-
-        write_to_file "\
-{
-  \"domains\": [
-    "example.ts"
-  ],
-  \"features\": [],
-  \"commons\": [
-    \"express.ts\",
-    \"time.ts\",
-    \"response.ts\"
-  ],
-  \"externals\": [
-    \"express@4.18.3\"
-  ]
-}
-" "$features_example_dir/dependency.json"
 
         write_to_file "\
 #!/bin/sh

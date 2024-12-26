@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="v1.0.1"
+version="v1.0.2"
 original_ifs="$IFS"
 language="unknown"
 structure_version="v4"
@@ -245,6 +245,8 @@ Project name: ${bold_start}$base_dir${bold_end}\n"
 
         _running_command="cargo run"
     fi
+
+    git init || true
 
     printf "%b" "\
 Generating... [DONE]

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="v1.0.3"
+version="v1.0.4"
 original_ifs="$IFS"
 language="unknown"
 structure_version="v4"
@@ -2112,6 +2112,10 @@ import_v4() {
     read_input "Type '${bold_start}y${bold_end}' and press Enter to confirm. Otherwise, the process will be aborted... " ""
 
     if ! is_equal "$input" "y"; then
+        if is_equal "$_is_need_to_rm_source_dir" "yes"; then
+            remove_dir "$_source_dir"
+        fi
+
         echo "Aborted!" && exit 1
     fi
 
@@ -2123,7 +2127,7 @@ import_v4() {
         determine_dir_language ""
     fi
 
-    determine_dir_language_module
+    determine_dir_language_module ""
 
     IFS=","
 

@@ -2277,6 +2277,8 @@ import_v4() {
         determine_dir_language ""
     fi
 
+    echo "..."
+
     determine_dir_language_module
 
     set -- $(get_clean_string_from_space "$_external_dependencies_to_be_installed")

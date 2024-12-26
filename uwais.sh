@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="v1.0.4"
+version="v1.0.5"
 original_ifs="$IFS"
 language="unknown"
 structure_version="v4"
@@ -1432,8 +1432,8 @@ npm install
         write_to_file "\
 #!/bin/sh
 
-tsc || ./node_modules/.bin/tsc
-tsc-alias || ./node_modules/.bin/tsc-alias
+./node_modules/.bin/tsc || tsc
+./node_modules/.bin/tsc-alias || tsc-alias
 node ./dist/main.js
 " "$infra_dir/start.sh"
     
@@ -1485,7 +1485,7 @@ expressSrv!.listen(8080, function()  {
   \"license\": \"\",
   \"main\": \"./dist/main.js\",
   \"scripts\": {
-    \"build\": \"tsc || ./node_modules/.bin/tsc && tsc-alias || ./node_modules/.bin/tsc-alias\",
+    \"build\": \"./node_modules/.bin/tsc || tsc && ./node_modules/.bin/tsc-alias || tsc-alias\",
     \"start\": \"node ./dist/main.js\",
     \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"
   },

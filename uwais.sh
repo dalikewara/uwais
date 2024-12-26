@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="v1.0.5"
+version="v1.0.6"
 original_ifs="$IFS"
 language="unknown"
 structure_version="v4"
@@ -34,8 +34,8 @@ Usage:
 "
 
         printf "%b" "\
-${color_green}${bold_start}version ${bold_end}${color_reset}                      :Get current version
-${color_green}${bold_start}update ${bold_end}${color_reset}                       :Update to the latest version
+${color_green}${bold_start}version ${bold_end}${color_reset}                      :Get the current uwais version
+${color_green}${bold_start}update ${bold_end}${color_reset}                       :Update to the latest uwais version
 ${color_green}${bold_start}import ${bold_end}${color_reset}[VERSION] OPTION       :Use import function(s)
 ${color_cyan}${bold_start}    common ${bold_end}${color_reset}NAMES... SOURCE    :Import common function(s) from the source project
 ${color_cyan}${bold_start}    domain ${bold_end}${color_reset}NAMES... SOURCE    :Import domain(s) from the source project
@@ -54,10 +54,11 @@ ${color_green}${bold_start}rust ${bold_end}${color_reset}[VERSION]              
 
         printf "%b" "\
 - :${bold_start}[ ]${bold_end} is OPTIONAL
+- :${bold_start}...${bold_end} is multiple value separated by comma
+- :${bold_start}VERSION${bold_end} is the structure version
 - :Available structure ${bold_start}VERSION${bold_end} (Default is ${bold_start}v4${bold_end}): v4
 - :${bold_start}SOURCE${bold_end} project can be one of these: /your/local/path | git@github.com:username/your/project.git | \
 https://github.com/username/your/project.git
-- :${bold_start}...${bold_end} is multiple value separated by comma
 - :Example usage: 
   :
   :generate new Golang project: 

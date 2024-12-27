@@ -90,7 +90,7 @@ Example (Golang):
 - A **Feature** encapsulates your main business feature, logic, or service
 - Here, you include everything necessary to ensure the proper functioning of the feature
 - Please prioritize **Feature-Driven Design**, ensuring that features should can be easily adapted and seamlessly integrated and imported into different projects
-- A standard **Feature** may comprises the following parts: `repository`, `use case`, `http/grpc/cron/etc service`. But, these are **OPTIONAL**, so feel free to adopt your own style as long as it aligns with the core concept:
+- A standard **Feature** may comprise the following parts: `repository`, `use case`, `http/grpc/cron/etc service`. But, these are **OPTIONAL**, so feel free to adopt your own style as long as it aligns with the core concept:
   - **repository**
     - Handles communication with external data resources like databases, cloud services, or external services
     - Keep your repositories as simple as possible, avoid adding excessive logic

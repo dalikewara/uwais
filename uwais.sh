@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="v1.0.7"
+version="v1.1.0"
 original_ifs="$IFS"
 language="unknown"
 structure_version="v4"
@@ -43,7 +43,7 @@ ${color_cyan}${bold_start}    feature ${bold_end}${color_reset}NAMES... SOURCE  
 ${color_green}${bold_start}go ${bold_end}${color_reset}[VERSION]                  :Generate new Golang project
 ${color_green}${bold_start}python ${bold_end}${color_reset}[VERSION]              :Generate new Python project
 ${color_green}${bold_start}typescript ${bold_end}${color_reset}[VERSION]          :Generate new TypeScript project
-${color_green}${bold_start}nodejs ${bold_end}${color_reset}[VERSION]              :Generate new NodeJS project (NOT READY YET)
+${color_green}${bold_start}nodejs ${bold_end}${color_reset}[VERSION]              :Generate new NodeJS project
 ${color_green}${bold_start}rust ${bold_end}${color_reset}[VERSION]                :Generate new Rust project (NOT READY YET)
         " | while IFS=: read -r _name _description; do
             printf "%b" "$_name"
@@ -117,14 +117,12 @@ https://github.com/username/your/project.git
         printf "%b" "\n${color_green}${bold_start}[DONE]${bold_end}${color_reset}\n\n"
 
         return 0
-    elif is_go || is_python || is_typescript; then
+    elif is_go || is_python || is_typescript || is_nodejs; then
         echo ""
 
         read_input "Enter project name (ex: my-project)... " "check_project_name"
 
         base_dir="$input"
-    elif is_nodejs; then
-        echo "NodeJS is not ready yet!" && exit 1
     elif is_rust; then
         echo "Rust is not ready yet!" && exit 1
     else
@@ -696,14 +694,6 @@ go mod vendor"
         write_to_file "\
 package common
 
-import \"errors\"
-
-var ErrInvalidRequestMethod = errors.New(\"invalid request method\")
-" "$common_dir/error.go"
-
-        write_to_file "\
-package common
-
 import \"net/http\"
 
 func NewNetHttpServer() *http.Server {
@@ -712,7 +702,7 @@ func NewNetHttpServer() *http.Server {
 
 func NewNetHttpServerMux() *http.ServeMux {
     return http.NewServeMux()
-}
+}\
 " "$common_dir/netHttp.go"
 
         write_to_file "\
@@ -741,7 +731,7 @@ func NewResponseJSONError(err error) *ResponseJSON {
             err.Error(),
         },
     }
-}
+}\
 " "$common_dir/response.go"
 
         write_to_file "\
@@ -751,7 +741,7 @@ import \"time\"
 
 func TimeNowUTC() time.Time {
     return time.Now().UTC()
-}
+}\
 " "$common_dir/time.go"
 
         write_to_file "\
@@ -798,7 +788,7 @@ type ExampleDTO1 struct {
     ID        uint64    \`json:\"id\"\`
     Username  string    \`json:\"username\"\`
     CreatedAt time.Time \`json:\"created_at\"\`
-}
+}\
 " "$domain_dir/example.go"
 
         write_to_file "\
@@ -806,6 +796,7 @@ package example
 
 import (
     \"encoding/json\"
+    \"errors\"
     \"$module/common\"
     \"$module/domain\"
     \"net/http\"
@@ -829,7 +820,7 @@ func (h *httpServiceNetHttpV1) Detail(method string, path string) {
         ctx := r.Context()
 
         if r.Method != strings.ToUpper(method) {
-            resultBytes, _ := json.Marshal(common.NewResponseJSONError(common.ErrInvalidRequestMethod))
+            resultBytes, _ := json.Marshal(common.NewResponseJSONError(errors.New(\"invalid method\")))
 
             w.WriteHeader(400)
 
@@ -857,7 +848,7 @@ func (h *httpServiceNetHttpV1) Detail(method string, path string) {
 
         return
     })
-}
+}\
 " "$features_example_dir/httpService_netHttp_v1.go"
 
         write_to_file "\
@@ -888,7 +879,7 @@ func (r *repositoryMySQL) FindByIDCtx(ctx context.Context, id uint64) (*domain.E
     example.SetCreatedAtNow()
 
     return example, nil
-}
+}\
 " "$features_example_dir/repository_mysql.go"
 
         write_to_file "\
@@ -919,7 +910,7 @@ func (u *useCaseV1) GetDetailCtx(ctx context.Context, id uint64) (*domain.Exampl
     }
 
     return example.ToDTO1(), nil
-}
+}\
 " "$features_example_dir/usecase_v1.go"
 
         write_to_file "\
@@ -927,7 +918,7 @@ func (u *useCaseV1) GetDetailCtx(ctx context.Context, id uint64) (*domain.Exampl
 
 mkdir tmp || true
 go mod tidy$_go_mod_vendor
-go build -o main
+go build -o main\
 " "$infra_dir/build.sh"
     
         chmod +x "$infra_dir/build.sh"
@@ -936,7 +927,7 @@ go build -o main
 #!/bin/sh
 
 go mod tidy$_go_mod_vendor
-(./main 2>/dev/null && echo \"running './main'\") || (echo \"running 'go run main.go'\" && go run main.go)
+(./main 2>/dev/null && echo \"running './main'\") || (echo \"running 'go run main.go'\" && go run main.go)\
 " "$infra_dir/start.sh"
     
         chmod +x "$infra_dir/start.sh"
@@ -983,7 +974,7 @@ func main() {
     if err := httpServer.ListenAndServe(); err != nil {
         panic(err)
     }
-}
+}\
 " "main.go"
 
     elif is_python; then
@@ -1041,11 +1032,11 @@ def new_response_json_error(err: Exception = None) -> dict:
 " "$common_dir/response.py"
 
         write_to_file "\
-from datetime import datetime
+import datetime
 
 
 def time_now_utc() -> datetime:
-    return datetime.utcnow()
+    return datetime.datetime.now(datetime.UTC)
 " "$common_dir/time.py"
 
         write_to_file "\
@@ -1181,7 +1172,7 @@ class UseCaseV1(ExampleUseCase):
 
 mkdir tmp || true
 venv/bin/python -m venv venv || python -m venv venv
-venv/bin/pip install -r requirements.txt || pip install -r requirements.txt
+venv/bin/pip install -r requirements.txt || pip install -r requirements.txt\
 " "$infra_dir/build.sh"
     
         chmod +x "$infra_dir/build.sh"
@@ -1189,7 +1180,7 @@ venv/bin/pip install -r requirements.txt || pip install -r requirements.txt
         write_to_file "\
 #!/bin/sh
 
-venv/bin/python main.py || python main.py
+venv/bin/python main.py || python main.py\
 " "$infra_dir/start.sh"
     
         chmod +x "$infra_dir/start.sh"
@@ -1234,21 +1225,21 @@ Flask==3.0.2
 itsdangerous==2.2.0
 Jinja2==3.1.4
 MarkupSafe==2.1.5
-Werkzeug==3.0.3
+Werkzeug==3.0.3\
 " "requirements.txt"
 
     elif is_typescript; then
         write_to_file "\
-import express, { Express } from 'express';
+import express, { Express } from \"express\";
 
-export function newExpress(): [Express | null,  Error | null] {
+export function newExpressClient(): [Express | null,  Error | null] {
     try {
         return [express(), null];
-    }catch (err) {
-        return [null, err instanceof Error ? err : new Error('general error')];
+    } catch (err) {
+        return [null, err instanceof Error ? err : new Error(\"general error\")];
     }
-}
-" "$common_dir/express_client.ts"
+}\
+" "$common_dir/expressClient.ts"
 
         write_to_file "\
 export type ResponseJSON = {
@@ -1274,17 +1265,17 @@ export function newResponseJSONError(err: Error): ResponseJSON {
         data: {},
         errors: [err.message]
     };
-}
+}\
 " "$common_dir/response.ts"
 
         write_to_file "\
 export function timeNowUTC(): Date {
     return new Date();
-}
+}\
 " "$common_dir/time.ts"
 
         write_to_file "\
-import { timeNowUTC } from '@common/time';
+import { timeNowUTC } from \"@common/time\";
 
 export interface ExampleRepository {
     findByID(id: number): [Example | null, Error | null];
@@ -1300,8 +1291,8 @@ export interface ExampleHttpService {
 
 export class Example {
     public id: number = 0;
-    public username: string = '';
-    public password: string = '';
+    public username: string = \"\";
+    public password: string = \"\";
     public createdAt: Date | null = null;
 
     constructor(obj?: {
@@ -1332,13 +1323,13 @@ export type ExampleDTO1 = {
     id: number;
     username: string;
     createdAt: Date | null;
-}
+}\
 " "$domain_dir/example.ts"
 
         write_to_file "\
-import {Express, Request, Response} from 'express';
-import {ExampleHttpService, ExampleUseCase} from '@domain/example';
-import {newResponseJSONSuccess, newResponseJSONError} from '@common/response';
+import {Express, Request, Response} from \"express\";
+import {ExampleHttpService, ExampleUseCase} from \"@domain/example\";
+import {newResponseJSONSuccess, newResponseJSONError} from \"@common/response\";
 
 export class HttpServiceExpressV1 implements ExampleHttpService {
     private readonly client: Express;
@@ -1356,7 +1347,6 @@ export class HttpServiceExpressV1 implements ExampleHttpService {
         this.client[method.toLowerCase()](path, function (req: Request, res: Response) {
             try {
                 const [result, err] = exampleUseCase.getDetail(1);
-
                 if (err instanceof Error) {
                     res.json(newResponseJSONError(err));
                     return;
@@ -1364,15 +1354,15 @@ export class HttpServiceExpressV1 implements ExampleHttpService {
 
                 res.json(newResponseJSONSuccess(result!));
             } catch (err) {
-                res.json(newResponseJSONError(err instanceof Error ? err : new Error('general error')));
+                res.json(newResponseJSONError(err instanceof Error ? err : new Error(\"general error\")));
             }
         });
     }
-}
+}\
 " "$features_example_dir/httpService_express_v1.ts"
 
         write_to_file "\
-import {Example, ExampleRepository} from '@domain/example';
+import {Example, ExampleRepository} from \"@domain/example\";
 
 export class RepositoryMySQL implements ExampleRepository {
     private readonly db: null;
@@ -1385,22 +1375,22 @@ export class RepositoryMySQL implements ExampleRepository {
         try {
             let example = new Example({
                 id:id,
-                username: 'dalikewara',
-                password: 'admin123'
+                username: \"dalikewara\",
+                password: \"admin123\"
             });
 
             example.setCreatedAtNow();
 
             return [example, null];
         } catch (err) {
-            return [null, err instanceof Error ? err : new Error('general error')];
+            return [null, err instanceof Error ? err : new Error(\"general error\")];
         }
     }
-}
+}\
 " "$features_example_dir/repository_mysql.ts"
 
         write_to_file "\
-import {Example, ExampleDTO1, ExampleRepository, ExampleUseCase} from '@domain/example';
+import {ExampleDTO1, ExampleRepository, ExampleUseCase} from \"@domain/example\";
 
 export class UseCaseV1 implements ExampleUseCase {
     private readonly exampleRepository: ExampleRepository;
@@ -1411,21 +1401,20 @@ export class UseCaseV1 implements ExampleUseCase {
 
     getDetail(id: number): [ExampleDTO1 | null, Error | null] {
         let [example, err] = this.exampleRepository.findByID(id);
-
         if (err instanceof Error) {
             return [null, err];
         }
 
         return [example!.toDTO1(), null];
     }
-}
+}\
 " "$features_example_dir/usecase_v1.ts"
 
         write_to_file "\
 #!/bin/sh
 
 mkdir tmp || true
-npm install
+npm install\
 " "$infra_dir/build.sh"
     
         chmod +x "$infra_dir/build.sh"
@@ -1435,46 +1424,46 @@ npm install
 
 ./node_modules/.bin/tsc || tsc
 ./node_modules/.bin/tsc-alias || tsc-alias
-node ./dist/main.js
+node ./dist/main.js\
 " "$infra_dir/start.sh"
     
         chmod +x "$infra_dir/start.sh"
 
         write_to_file "\
-import {newExpress} from '@common/express_client'
-import {RepositoryMySQL as ExampleRepositoryMySQL} from '@features/example/repository_mysql'
-import {UseCaseV1 as ExampleUseCaseV1} from '@features/example/usecase_v1'
-import {HttpServiceExpressV1 as ExampleHttpServiceExpressV1} from '@features/example/httpService_express_v1'
+import {newExpressClient} from \"@common/expressClient\"
+import {RepositoryMySQL as ExampleRepositoryMySQL} from \"@features/example/repository_mysql\"
+import {UseCaseV1 as ExampleUseCaseV1} from \"@features/example/usecase_v1\"
+import {HttpServiceExpressV1 as ExampleHttpServiceExpressV1} from \"@features/example/httpService_express_v1\"
 
 // Http server initialization
 
-const [expressSrv, expressSrvErr] = newExpress()
+const [expressClient, expressClientErr] = newExpressClient();
 
-if (expressSrvErr instanceof Error) {
-    throw expressSrvErr
+if (expressClientErr instanceof Error) {
+    throw expressClientErr;
 }
 
 // Repositories
 
-const exampleRepository = new ExampleRepositoryMySQL(null)
+const exampleRepository = new ExampleRepositoryMySQL(null);
 
 // Use cases
 
-const exampleUseCaseV1 = new ExampleUseCaseV1(exampleRepository)
+const exampleUseCaseV1 = new ExampleUseCaseV1(exampleRepository);
 
 // Services
 
-const exampleHttpServiceExpressV1 = new ExampleHttpServiceExpressV1(expressSrv!, exampleUseCaseV1)
+const exampleHttpServiceExpressV1 = new ExampleHttpServiceExpressV1(expressClient!, exampleUseCaseV1);
 
 // Service handlers
 
-exampleHttpServiceExpressV1.detail(\"GET\", \"/example\")
+exampleHttpServiceExpressV1.detail(\"GET\", \"/example\");
 
 // Start & listen application
 
-expressSrv!.listen(8080, function()  {
-    console.log(\"Application is running on port: \" + 8080)
-})
+expressClient!.listen(8080, function()  {
+    console.log(\"Application is running on port: \" + 8080);
+});\
 " "main.ts"
 
         write_to_file "\
@@ -1500,7 +1489,7 @@ expressSrv!.listen(8080, function()  {
     \"tsconfig-paths\": \"^4.2.0\",
     \"typescript\": \"^5.4.2\"
   }
-}
+}\
 " "package.json"
 
         write_to_file "\
@@ -1533,11 +1522,302 @@ expressSrv!.listen(8080, function()  {
   \"ts-node\": {
     \"require\": [\"tsconfig-paths/register\"]
   }
-}
+}\
 " "tsconfig.json"
 
     elif is_nodejs; then
-        echo "v4 structure for NodeJS is not ready yet!" && exit 1
+        write_to_file "\
+const express = require(\"express\");
+
+function newClient() {
+    try {
+        return [express(), null];
+    } catch (err) {
+        return [null, err instanceof Error ? err : new Error(\"general error\")];
+    }
+}
+
+module.exports = {
+    newClient,
+};\
+" "$common_dir/expressClient.js"
+
+        write_to_file "\
+const JSON = {
+    status: false,
+    message: \"\",
+    data: null,
+    errors: [],
+}
+
+function newJSONSuccess(data) {
+    let result = Object.create(JSON);
+
+    result.status = true;
+    result.message = \"ok\";
+    result.data = data || null;
+
+    return result;
+}
+
+function newJSONError(err) {
+    let result = Object.create(JSON);
+
+    result.message = \"error\";
+    result.errors = [err.message];
+
+    return result;
+}
+
+module.exports = {
+    newJSONSuccess,
+    newJSONError,
+};\
+" "$common_dir/response.js"
+
+        write_to_file "\
+function nowUTC() {
+    return new Date();
+}
+
+module.exports = {
+    nowUTC,
+};\
+" "$common_dir/time.js"
+
+        write_to_file "\
+const comTime = require(\"../common/time\");
+
+class Repository {
+    findByID(id) {
+        throw new Error(\"findByID() method must be implemented\");
+    }
+}
+
+class UseCase {
+    getDetail(id) {
+        throw new Error(\"getDetail() method must be implemented\");
+    }
+}
+
+class HttpService {
+    detail(method, path) {
+        throw new Error(\"detail() method must be implemented\");
+    }
+}
+
+class Example {
+    constructor({
+        id,
+        username,
+        password,
+    }) {
+        this.id = id || 0;
+        this.username = username || \"\";
+        this.password = password || \"\";
+        this.createdAt = null;
+    }
+
+    setCreatedAtNow() {
+        this.createdAt = comTime.nowUTC();
+    }
+
+    toDTO1() {
+        return new ExampleDTO1({
+            id: this.id,
+            username: this.username,
+            createdAt: this.createdAt,
+        });
+    }
+}
+
+class ExampleDTO1 {
+    constructor({
+        id,
+        username,
+        createdAt,
+    }) {
+        this.id= id || 0;
+        this.username= username || \"\";
+        this.createdAt= createdAt || null;
+    }
+}
+
+module.exports = {
+    Repository,
+    UseCase,
+    HttpService,
+    Example,
+    ExampleDTO1,
+};\
+" "$domain_dir/example.js"
+
+        write_to_file "\
+const comResponse = require(\"../../common/response\");
+const domExample = require(\"../../domain/example\");
+
+class HttpService extends domExample.HttpService {
+    constructor(client, exampleUseCase) {
+        super();
+        this.client = client;
+        this.exampleUseCase = exampleUseCase;
+    }
+
+    detail(method, path) {
+        const exampleUseCase = this.exampleUseCase;
+
+        this.client[method.toLowerCase()](path, function (req, res) {
+            try {
+                const [result, err] = exampleUseCase.getDetail(1);
+                if (err instanceof Error) {
+                    res.json(comResponse.newJSONError(err));
+
+                    return;
+                }
+
+                res.json(comResponse.newJSONSuccess(result));
+            } catch (err) {
+                res.json(comResponse.newJSONError(err instanceof Error ? err : new Error(\"general error\")));
+            }
+        });
+    }
+}
+
+module.exports = {
+    HttpService,
+};\
+" "$features_example_dir/httpService_express_v1.js"
+
+        write_to_file "\
+const domExample = require(\"../../domain/example\");
+
+class Repository extends domExample.Repository {
+    constructor(db) {
+        super();
+        this.db = db;
+    }
+
+    findByID(id) {
+        try {
+            let example = new domExample.Example({
+                id: id,
+                username: \"dalikewara\",
+                password: \"admin123\",
+            });
+
+            example.setCreatedAtNow();
+
+            return [example, null];
+        } catch (err) {
+            return [null, err instanceof Error ? err : new Error(\"general error\")];
+        }
+    }
+}
+
+module.exports = {
+    Repository,
+};\
+" "$features_example_dir/repository_mysql.js"
+
+        write_to_file "\
+const domExample = require(\"../../domain/example\");
+
+class UseCase extends domExample.UseCase {
+    constructor(exampleRepository) {
+        super();
+        this.exampleRepository = exampleRepository;
+    }
+
+    getDetail(id) {
+        let [example, err] = this.exampleRepository.findByID(id);
+        if (err instanceof Error) {
+            return [null, err];
+        }
+
+        return [example.toDTO1(), null];
+    }
+}
+
+module.exports = {
+    UseCase,
+};\
+" "$features_example_dir/usecase_v1.js"
+
+        write_to_file "\
+#!/bin/sh
+
+mkdir tmp || true
+npm install\
+" "$infra_dir/build.sh"
+    
+        chmod +x "$infra_dir/build.sh"
+
+        write_to_file "\
+#!/bin/sh
+
+node ./main.js\
+" "$infra_dir/start.sh"
+    
+        chmod +x "$infra_dir/start.sh"
+
+        write_to_file "\
+const comExpressClient = require(\"./common/expressClient\");
+const ftrExampleHttpServiceExpressV1 = require(\"./features/example/httpService_express_v1\");
+const ftrExampleRepositoryMySQL = require(\"./features/example/repository_mysql\");
+const ftrExampleUseCaseV1 = require(\"./features/example/usecase_v1\");
+
+// Http server initialization
+
+const [expressClient, err] = comExpressClient.newClient();
+if (err instanceof Error) {
+    throw err;
+}
+
+// Repositories
+
+const exampleRepositoryMySQL = new ftrExampleRepositoryMySQL.Repository(null);
+
+// Use cases
+
+const exampleUseCaseV1 = new ftrExampleUseCaseV1.UseCase(exampleRepositoryMySQL);
+
+// Services
+
+const exampleHttpServiceExpressV1 = new ftrExampleHttpServiceExpressV1.HttpService(expressClient, exampleUseCaseV1);
+
+// Service handlers
+
+exampleHttpServiceExpressV1.detail(\"GET\", \"/example\");
+
+// Start & listen application
+
+expressClient.listen(8080, function()  {
+    console.log(\"Application is running on port: \" + 8080)
+});\
+" "main.js"
+
+        write_to_file "\
+{
+  \"name\": \"$base_dir\",
+  \"version\": \"1.0.0\",
+  \"description\": \"\",
+  \"author\": \"\",
+  \"license\": \"\",
+  \"main\": \"main.js\",
+  \"scripts\": {
+    \"build\": \"\",
+    \"start\": \"node main.js\",
+    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"
+  },
+  \"dependencies\": {
+    \"express\": \"^4.18.3\"
+  },
+  \"devDependencies\": {
+    \"@types/express\": \"^4.17.21\"
+  }
+}\
+" "package.json"
+
     elif is_rust; then
         echo "v4 structure for Rust is not ready yet!" && exit 1
     else
@@ -1551,7 +1831,7 @@ chmod +x infra/build.sh
 chmod +x infra/start.sh
 chmod +x infra/docker-up.sh
 chmod +x infra/docker-stop.sh
-chmod +x infra/docker-down.sh
+chmod +x infra/docker-down.sh\
 " "$infra_dir/chmod.sh"
     
     chmod +x "$infra_dir/chmod.sh"
@@ -1559,7 +1839,7 @@ chmod +x infra/docker-down.sh
     write_to_file "\
 #!/bin/sh
 
-docker compose -f docker-compose.yml --project-directory . down
+docker compose -f docker-compose.yml --project-directory . down\
 " "$infra_dir/docker-down.sh"
     
     chmod +x "$infra_dir/docker-down.sh"
@@ -1567,7 +1847,7 @@ docker compose -f docker-compose.yml --project-directory . down
     write_to_file "\
 #!/bin/sh
 
-docker compose -f docker-compose.yml --project-directory . stop
+docker compose -f docker-compose.yml --project-directory . stop\
 " "$infra_dir/docker-stop.sh"
     
     chmod +x "$infra_dir/docker-stop.sh"
@@ -1575,7 +1855,7 @@ docker compose -f docker-compose.yml --project-directory . stop
     write_to_file "\
 #!/bin/sh
 
-docker compose -f docker-compose.yml --project-directory . up -d --force-recreate --build
+docker compose -f docker-compose.yml --project-directory . up -d --force-recreate --build\
 " "$infra_dir/docker-up.sh"
     
     chmod +x "$infra_dir/docker-up.sh"
@@ -1586,7 +1866,7 @@ tmp
 vendor
 node_modules
 venv
-dist
+dist\
 " ".dockerignore"
 
     write_to_file "\
@@ -1597,7 +1877,7 @@ MYSQL_HOST=localhost
 MYSQL_PORT=3306
 MYSQL_USER=
 MYSQL_PASSWORD=
-MYSQL_DB_NAME=
+MYSQL_DB_NAME=\
 " ".env.example"
 
     cp ".env.example" ".env"
@@ -1692,7 +1972,7 @@ venv
 venv/*
 *pycache*
 .pypirc
-vendor
+vendor\
 " ".gitignore"
 
     write_to_file "\
@@ -1707,7 +1987,7 @@ services:
     build:
       context: .
     restart: always
-    network_mode: \"host\"
+    network_mode: \"host\"\
 " "docker-compose.yml"
 
     write_to_file "\
@@ -1731,7 +2011,7 @@ RUN ./infra/chmod.sh
 RUN ./infra/build.sh
 
 # Run apps
-ENTRYPOINT [\"/$base_dir-$language/infra/start.sh\"]
+ENTRYPOINT [\"/$base_dir-$language/infra/start.sh\"]\
 " "Dockerfile"
 
     write_to_file "\
@@ -1753,7 +2033,7 @@ docker-stop: chmod ## stops docker service
     ./infra/docker-stop.sh
 
 docker-down: chmod ## removes docker service
-    ./infra/docker-down.sh
+    ./infra/docker-down.sh\
 " "Makefile"
 
     sed -i 's/^    /\t/' "Makefile"
@@ -1937,7 +2217,7 @@ uwais import domain $_example_domain_3 /path/to/your/project
 
 \`\`\`bash
 uwais import common $_example_common_3 https://example.com/user/project.git
-\`\`\`
+\`\`\`\
 " "README.md"
 }
 

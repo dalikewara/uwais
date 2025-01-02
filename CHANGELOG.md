@@ -1,5 +1,11 @@
 # Changelogs
 
+## 2025
+
+- **v1.1,0** (2025-01-02)
+  - Add support for NodeJS
+  - Change some codes
+
 ## 2024
 
 - **v1.0.7** (2024-12-28)

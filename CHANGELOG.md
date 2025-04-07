@@ -2,8 +2,9 @@
 
 ## 2025
 
-- **v1.1.1** (2025-04-07)
+- **v1.1.1 - v1.1.2** (2025-04-07)
   - Enhanced `install.sh` script and `update` command
+  - Updated `uwais` version
 
 - **v1.1.0** (2025-01-02)
   - Added support for Node.js

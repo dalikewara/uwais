@@ -47,7 +47,7 @@ ${color_green}${bold_start}nodejs ${bold_end}${color_reset}[VERSION]            
 ${color_green}${bold_start}rust ${bold_end}${color_reset}[VERSION]                :Generate new Rust project (NOT READY YET)
         " | while IFS=: read -r _name _description; do
             printf "%b" "$_name"
-            printf "$_description\n" | fold -s -w $(($(tput cols) - 30)) | sed '2,$s/^/                                /'
+            printf "%s\n" "$_description" | fold -s -w $(($(tput cols) - 30)) | sed '2,$s/^/                                /'
         done
 
         printf "%b" "\nNote:\n\n"
@@ -70,7 +70,7 @@ https://github.com/username/your/project.git
   :${color_green}${bold_start}    uwais import feature ${bold_end}${color_reset}user,product ../my-project
 \n" | while IFS=: read -r _name _description; do
             printf "%b" "$_name"
-            printf "$_description\n" | fold -s -w $(($(tput cols) - 2)) | sed '2,$s/^/  /'
+            printf "%s\n" "$_description" | fold -s -w $(($(tput cols) - 2)) | sed '2,$s/^/  /'
         done
 
         return 0
@@ -84,6 +84,14 @@ https://github.com/username/your/project.git
         _url="https://raw.githubusercontent.com/dalikewara/uwais/master/uwais.sh"
         _tmp_filepath="/tmp/uwais.sh"
         _installation_filepath="/usr/local/bin/uwais"
+
+        if ! is_dir_exist "/usr/local/bin"; then
+          _installation_filepath="/usr/bin/uwais"
+        fi
+
+        if ! is_dir_exist "/tmp"; then
+          create_dir "/tmp"
+        fi
 
         curl -L "$_url" -o "$_tmp_filepath"
 
@@ -190,7 +198,7 @@ Project name: ${bold_start}$base_dir${bold_end}\n"
 
     create_dir "$base_dir"
 
-    cd "$base_dir"
+    cd "$base_dir" || exit 1
 
     echo "cd \"$base_dir\"... [DONE]"
 
@@ -316,14 +324,17 @@ is_dir_exist() {
 }
 
 is_git_url() {
+    # shellcheck disable=SC2143
     [ "$(echo "$1" | grep -E '\.git$' | grep -E 'https://|http://|git@')" ]
 }
 
 get_raw_json_from_file() {
+    # shellcheck disable=SC2002
     cat "$1" | tr -d '[:space:]'
 }
 
 get_raw_json_from_file_for_external() {
+    # shellcheck disable=SC2002
     cat "$1" | tr -d '\n' | tr -s '[:blank:]' ' ' | sed 's/* //g'
 }
 
@@ -2233,6 +2244,7 @@ import_v4() {
         __names="$2"
         __source_dir="$3"
 
+        # shellcheck disable=SC2046
         set -- $(get_clean_string_from_space "$__names")
 
         while [ $# -gt 0 ]; do
@@ -2412,6 +2424,7 @@ import_v4() {
 
     IFS=","
 
+    # shellcheck disable=SC2046
     set -- $(get_clean_string_from_space "$_common_functions_to_be_imported")
 
     while [ $# -gt 0 ]; do
@@ -2446,6 +2459,7 @@ import_v4() {
         shift
     done
 
+    # shellcheck disable=SC2046
     set -- $(get_clean_string_from_space "$_domains_to_be_imported")
 
     while [ $# -gt 0 ]; do
@@ -2480,6 +2494,7 @@ import_v4() {
         shift
     done
 
+    # shellcheck disable=SC2046
     set -- $(get_clean_string_from_space "$_features_to_be_imported")
 
     while [ $# -gt 0 ]; do
@@ -2520,6 +2535,7 @@ import_v4() {
 
     echo "..."
 
+    # shellcheck disable=SC2046
     set -- $(get_clean_string_from_space "$_external_dependencies_to_be_installed")
 
     while [ $# -gt 0 ]; do

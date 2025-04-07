@@ -5,6 +5,14 @@ script_name="uwais.sh"
 install_dir="/usr/local/bin"
 target_name="uwais"
 
+if ! [ -d "$install_dir" ]; then
+  install_dir="/usr/bin"
+fi
+
+if ! [ -d "/tmp" ]; then
+  mkdir "/tmp"
+fi
+
 echo "Downloading the latest version of $script_name from $repo_url..."
 
 curl -L "$repo_url/$script_name" -o "/tmp/$script_name"

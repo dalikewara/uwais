@@ -137,7 +137,21 @@ fn update_windows_binary(os: OS, source_filepath: &PathBuf, std_text: &str, sour
     let updater_task_filepath = os.get_app_updater_task_filepath_from_main_process();
 
     if let Err(err) = copy_file(source_filepath, &updater_task_filepath) {
-        print_err_with_info(std_text, &err);
+        let err_string = err.to_string();
+
+        if err_string.contains("os error 5") || err_string.contains("Access is denied") {
+            print_err("Access denied - Administrator privileges required");
+            print_warn("Please run this command as Administrator:");
+            print_text("  1. Open Command Prompt or PowerShell as Administrator");
+            print_text("  2. Run: uwais update");
+            print_text("");
+            print_text("Alternatively, run the installer again to update:");
+            print_text("  Download the latest installer from:");
+            print_text("  https://github.com/dalikewara/uwais/releases/latest");
+        } else {
+            print_err_with_info(std_text, &err);
+        }
+
         source.clear();
         exit(1);
     }
@@ -159,7 +173,19 @@ fn update_windows_binary(os: OS, source_filepath: &PathBuf, std_text: &str, sour
 
 fn update_unix_binary(os: OS, source_filepath: &PathBuf, std_text: &str, source: &mut Source) {
     if let Err(err) = copy_file(source_filepath, &os.app_path) {
-        print_err_with_info(std_text, &err);
+        let err_string = err.to_string();
+
+        if err_string.contains("Permission denied") || err_string.contains("os error 13") {
+            print_err("Permission denied - Elevated privileges required");
+            print_warn("Please run this command with sudo:");
+            print_text(&format!("  sudo uwais update"));
+            print_text("");
+            print_text("Or reinstall using the installation script:");
+            print_text("  curl -sSL https://raw.githubusercontent.com/dalikewara/uwais/master/install.sh | sh");
+        } else {
+            print_err_with_info(std_text, &err);
+        }
+
         source.clear();
         exit(1);
     }

@@ -2,10 +2,11 @@
 
 ## 2026
 
-- **v1.2.0 - v2.0.1** (2026-01-11)
+- **v1.2.0 - v2.0.2** (2026-01-11)
   - Update `README`
   - Added backward compatibility scripts for the Rust upgrade
   - Complete rewrite in Rust
+  - Fix some issues
 
 ## 2025
 

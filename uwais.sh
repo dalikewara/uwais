@@ -1,6 +1,9 @@
 #!/bin/sh
 
-version="v1.1.2"
+# DEPRECATED: This shell script has been migrated to Rust in version 2.0.0
+# Please use the Rust implementation instead.
+
+version="v1.2.0"
 original_ifs="$IFS"
 language="unknown"
 structure_version="v4"
@@ -59,13 +62,13 @@ ${color_green}${bold_start}rust ${bold_end}${color_reset}[VERSION]              
 - :Available structure ${bold_start}VERSION${bold_end} (Default is ${bold_start}v4${bold_end}): v4
 - :${bold_start}SOURCE${bold_end} project can be one of these: /your/local/path | git@github.com:username/your/project.git | \
 https://github.com/username/your/project.git
-- :Example usage: 
+- :Example usage:
   :
-  :generate new Golang project: 
+  :generate new Golang project:
   :
   :${color_green}${bold_start}    uwais go${bold_end}${color_reset}
   :
-  :import feature from another project: 
+  :import feature from another project:
   :
   :${color_green}${bold_start}    uwais import feature ${bold_end}${color_reset}user,product ../my-project
 \n" | while IFS=: read -r _name _description; do
@@ -81,30 +84,49 @@ https://github.com/username/your/project.git
 
         return 0
     elif is_equal "$1" "update"; then
-        _url="https://raw.githubusercontent.com/dalikewara/uwais/master/uwais.sh"
-        _tmp_filepath="/tmp/uwais.sh"
-        _installation_filepath="/usr/local/bin/uwais"
+        _install_url="https://raw.githubusercontent.com/dalikewara/uwais/master/install.sh"
+        _tmp_dir="/tmp"
+        _tmp_filepath="$_tmp_dir/uwais_install.sh"
 
-        if ! is_dir_exist "/usr/local/bin"; then
-          _installation_filepath="/usr/bin/uwais"
+        echo "Migrating to Rust version (2.0.0+)..."
+        echo "Downloading installation script..."
+
+        if ! is_dir_exist "$_tmp_dir"; then
+          create_dir "$_tmp_dir"
         fi
 
-        if ! is_dir_exist "/tmp"; then
-          create_dir "/tmp"
+        if command -v curl > /dev/null 2>&1; then
+            curl -L "$_install_url" -o "$_tmp_filepath"
+        elif command -v wget > /dev/null 2>&1; then
+            wget -O "$_tmp_filepath" "$_install_url"
+        else
+            echo "Error: Neither curl nor wget is available"
+            return 1
         fi
 
-        curl -L "$_url" -o "$_tmp_filepath"
-
-        sudo mv "$_tmp_filepath" "$_installation_filepath"
-        sudo chmod +x "$_installation_filepath"
-
-        if [ -x "$_installation_filepath" ]; then
-            echo "Ok" && exit 0
+        if [ ! -f "$_tmp_filepath" ]; then
+            echo "Failed to download installation script"
+            return 1
         fi
 
-        echo "Aborted!"
+        chmod +x "$_tmp_filepath"
 
-        return 1
+        echo "Running installation script..."
+        sh "$_tmp_filepath"
+
+        _exit_code=$?
+
+        rm -f "$_tmp_filepath"
+
+        if [ $_exit_code -eq 0 ]; then
+            echo ""
+            echo "Migration completed successfully!"
+            echo "You are now using the Rust version of uwais."
+            exit 0
+        else
+            echo "Installation failed with exit code $_exit_code"
+            return 1
+        fi
     fi
 
     language="$1"
@@ -145,7 +167,7 @@ https://github.com/username/your/project.git
         read_input "We use vendoring by default, Type '${bold_start}n${bold_end}' and press Enter if you don't want to use it.... " ""
 
         module_2="vendor"
-        
+
         if is_equal "$input" "n"; then
             module_2=""
         fi
@@ -153,7 +175,7 @@ https://github.com/username/your/project.git
         read_input "We use virtual environment (venv) by default, Type '${bold_start}n${bold_end}' and press Enter if you don't want to use it.... " ""
 
         module="venv"
-        
+
         if is_equal "$input" "n"; then
             module=""
         fi
@@ -211,7 +233,7 @@ Project name: ${bold_start}$base_dir${bold_end}\n"
     if is_go; then
         go mod init "$module" || printf "%b" "${color_yellow}WARNING: Failed to create go module!\nYour application may not working properly until you create it manually!${color_reset}\n"
         go mod tidy  || printf "%b" "${color_yellow}WARNING: Failed to install dependencies!\nYour application may not working properly until you install them manually!${color_reset}\n"
-        
+
         if is_equal "$module_2" "vendor"; then
             go mod vendor  || true
         fi
@@ -263,7 +285,7 @@ To get started, you can enter to your project directory:
     ${color_cyan}${bold_start}cd ${bold_end}${color_reset}$base_dir
 
 and run your application (for example):
-    
+
     $_running_command
 
 then your application will be available at:
@@ -537,7 +559,7 @@ determine_dir_language() {
 
         return 0
     fi
-    
+
     if is_file_exist "${_dir}go.mod" && is_file_exist "${_dir}go.sum" && is_file_exist "${_dir}main.go"; then
         language="go"
 
@@ -606,51 +628,51 @@ determine_dir_language() {
         return 0
     elif is_file_exist "${_dir}__init__.py" && is_dir_exist "${_dir}venv"; then
         language="python"
-        
+
         return 0
     elif is_file_exist "${_dir}main.py" && is_dir_exist "${_dir}venv"; then
         language="python"
-        
+
         return 0
     elif is_file_exist "${_dir}__init__.py" && is_file_exist "${_dir}requirements.txt"; then
         language="python"
-        
+
         return 0
     elif is_file_exist "${_dir}main.py" && is_file_exist "${_dir}requirements.txt"; then
         language="python"
-        
+
         return 0
     elif is_file_exist "${_dir}requirements.txt" && is_dir_exist "${_dir}venv"; then
         language="python"
-        
+
         return 0
     elif is_file_exist "${_dir}tsconfig.json" && is_file_exist "${_dir}package.json"; then
         language="typescript"
-        
+
         return 0
     elif is_file_exist "${_dir}tsconfig.json" && is_file_exist "${_dir}main.ts"; then
         language="typescript"
-        
+
         return 0
     elif is_file_exist "${_dir}tsconfig.json" && is_dir_exist "${_dir}node_modules"; then
         language="typescript"
-        
+
         return 0
     elif is_file_exist "${_dir}main.ts" && is_dir_exist "${_dir}node_modules"; then
         language="typescript"
-        
+
         return 0
     elif is_file_exist "${_dir}main.ts" && is_file_exist "${_dir}package.json"; then
         language="typescript"
-        
+
         return 0
     elif is_file_exist "${_dir}package.json" && is_file_exist "${_dir}main.js"; then
         language="nodejs"
-        
+
         return 0
     elif is_file_exist "${_dir}main.js" && is_dir_exist "${_dir}node_modules"; then
         language="nodejs"
-        
+
         return 0
     fi
 
@@ -789,9 +811,9 @@ func (e *Example) SetCreatedAtNow() {
 
 func (e *Example) ToDTO1() *ExampleDTO1 {
     return &ExampleDTO1{
-        ID:        e.ID, 
+        ID:        e.ID,
         Username:  e.Username,
-        CreatedAt: e.CreatedAt, 
+        CreatedAt: e.CreatedAt,
     }
 }
 
@@ -931,7 +953,7 @@ mkdir tmp || true
 go mod tidy$_go_mod_vendor
 go build -o main\
 " "$infra_dir/build.sh"
-    
+
         chmod +x "$infra_dir/build.sh"
 
         write_to_file "\
@@ -940,7 +962,7 @@ go build -o main\
 go mod tidy$_go_mod_vendor
 (./main 2>/dev/null && echo \"running './main'\") || (echo \"running 'go run main.go'\" && go run main.go)\
 " "$infra_dir/start.sh"
-    
+
         chmod +x "$infra_dir/start.sh"
 
         write_to_file "\
@@ -1185,7 +1207,7 @@ mkdir tmp || true
 venv/bin/python -m venv venv || python -m venv venv
 venv/bin/pip install -r requirements.txt || pip install -r requirements.txt\
 " "$infra_dir/build.sh"
-    
+
         chmod +x "$infra_dir/build.sh"
 
         write_to_file "\
@@ -1193,7 +1215,7 @@ venv/bin/pip install -r requirements.txt || pip install -r requirements.txt\
 
 venv/bin/python main.py || python main.py\
 " "$infra_dir/start.sh"
-    
+
         chmod +x "$infra_dir/start.sh"
 
         write_to_file "\
@@ -1427,7 +1449,7 @@ export class UseCaseV1 implements ExampleUseCase {
 mkdir tmp || true
 npm install\
 " "$infra_dir/build.sh"
-    
+
         chmod +x "$infra_dir/build.sh"
 
         write_to_file "\
@@ -1437,7 +1459,7 @@ npm install\
 ./node_modules/.bin/tsc-alias || tsc-alias
 node ./dist/main.js\
 " "$infra_dir/start.sh"
-    
+
         chmod +x "$infra_dir/start.sh"
 
         write_to_file "\
@@ -1760,7 +1782,7 @@ module.exports = {
 mkdir tmp || true
 npm install\
 " "$infra_dir/build.sh"
-    
+
         chmod +x "$infra_dir/build.sh"
 
         write_to_file "\
@@ -1768,7 +1790,7 @@ npm install\
 
 node ./main.js\
 " "$infra_dir/start.sh"
-    
+
         chmod +x "$infra_dir/start.sh"
 
         write_to_file "\
@@ -1844,7 +1866,7 @@ chmod +x infra/docker-up.sh
 chmod +x infra/docker-stop.sh
 chmod +x infra/docker-down.sh\
 " "$infra_dir/chmod.sh"
-    
+
     chmod +x "$infra_dir/chmod.sh"
 
     write_to_file "\
@@ -1852,7 +1874,7 @@ chmod +x infra/docker-down.sh\
 
 docker compose -f docker-compose.yml --project-directory . down\
 " "$infra_dir/docker-down.sh"
-    
+
     chmod +x "$infra_dir/docker-down.sh"
 
     write_to_file "\
@@ -1860,7 +1882,7 @@ docker compose -f docker-compose.yml --project-directory . down\
 
 docker compose -f docker-compose.yml --project-directory . stop\
 " "$infra_dir/docker-stop.sh"
-    
+
     chmod +x "$infra_dir/docker-stop.sh"
 
     write_to_file "\
@@ -1868,7 +1890,7 @@ docker compose -f docker-compose.yml --project-directory . stop\
 
 docker compose -f docker-compose.yml --project-directory . up -d --force-recreate --build\
 " "$infra_dir/docker-up.sh"
-    
+
     chmod +x "$infra_dir/docker-up.sh"
 
     write_to_file "\
@@ -2304,9 +2326,9 @@ import_v4() {
                 else
                     _features_to_be_imported="$_features_to_be_imported,$__name"
                 fi
-                
+
                 __dependency_path="$__source_dir/$features_dir/$__name/dependency.json"
-                
+
                 if is_file_exist "$__dependency_path"; then
                     __dependency_json_raw=$(get_raw_json_from_file "$__dependency_path")
                     __dependency_json_raw=$(get_clean_string_from_space "$__dependency_json_raw")

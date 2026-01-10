@@ -1,0 +1,16 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "",
+  "main": "main.js",
+  "scripts": {
+    "build": "",
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "hyper-express": "^6.17.3"
+  }
+}

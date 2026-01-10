@@ -1,0 +1,29 @@
+from __future__ import annotations
+
+from typing import Any
+
+from pydantic import BaseModel
+
+
+class Response(BaseModel):
+    """
+    Response is a standard response format for all API responses.
+    """
+
+    status: bool = False
+    message: str = ""
+    data: Any = None
+
+    def ok(self, data: Any = None) -> dict:
+        self.status = True
+        self.message = "ok"
+        self.data = data
+
+        return self.model_dump()
+
+    def error(self, err: Exception = Exception("General error")) -> dict:
+        self.status = False
+        self.message = str(err)
+        self.data = None
+
+        return self.model_dump()

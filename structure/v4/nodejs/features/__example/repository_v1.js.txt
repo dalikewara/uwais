@@ -1,0 +1,24 @@
+const { Repository } = require('../../domain/{{TEMPLATE_NAME}}');
+
+/**
+ * RepositoryV1 is a basic implementation of the `Repository` blueprint that
+ * simulates a connection to a database.
+ *
+ * @class
+ * @extends {Repository}
+ * @implements {Repository}
+ */
+class RepositoryV1 extends Repository  {
+    // In a real app, you might want to inject a database connection here.
+    // db = null;
+
+    constructor() {
+        super();
+    }
+
+    // ...
+}
+
+module.exports = {
+    RepositoryV1,
+};

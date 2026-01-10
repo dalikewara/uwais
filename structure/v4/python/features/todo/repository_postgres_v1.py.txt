@@ -1,0 +1,112 @@
+from domain.todo import QueryFilter, Repository, ToDo, ToDoList
+
+
+class RepositoryPostgresV1(Repository):
+    """
+    RepositoryPostgresV1 is a basic implementation of the `Repository` blueprint that
+    simulates a connection to a Postgres database.
+
+    Note: This layer simulates Postgres database access for demonstration and testing purposes.
+    It does not connect to a real Postgres database.
+    """
+
+    # In a real app, you might want to inject a database connection here.
+    # db: None
+
+    def __init__(self) -> None:
+        return
+
+    def find_all(self, query_filter: QueryFilter) -> ToDoList:
+        """
+        Raises:
+            Exception
+        """
+        if query_filter.id is not None:
+            for row in mock_todos.rows:
+                if row.id == query_filter.id:
+                    return ToDoList([row])
+
+            return ToDoList()
+
+        limit = query_filter.limit
+
+        if limit < 1:
+            limit = mock_todos.len()
+
+        return ToDoList(mock_todos.rows[:limit])
+
+    def find_one(self, query_filter: QueryFilter) -> ToDo | None:
+        """
+        Raises:
+            Exception
+        """
+        result = self.find_all(query_filter=query_filter)
+
+        return result.first()
+
+    def insert(self, data: ToDo) -> None:
+        """
+        Raises:
+            Exception
+        """
+        if data.title == "":
+            raise Exception("Cannot insert empty data")
+
+        last_data = mock_todos.last()
+        if last_data is not None:
+            data.id = last_data.id + 1
+
+        data.set_created_at_now()
+
+        mock_todos.push(data)
+
+    def update(self, data: ToDo) -> None:
+        """
+        Raises:
+            Exception
+        """
+        if data.id < 1 or data.title == "":
+            raise Exception("Cannot update empty data")
+
+        data.set_updated_at_now()
+
+        for i, row in enumerate(mock_todos.rows):
+            if row.id == data.id:
+                mock_todos.rows[i] = data
+                break
+
+    def delete(self, data: ToDo) -> None:
+        """
+        Raises:
+            Exception
+        """
+        if data.id < 1:
+            raise Exception("Cannot delete empty data")
+
+        filtered = ToDoList()
+
+        for row in mock_todos.rows:
+            if row.id != data.id:
+                filtered.push(row)
+
+        mock_todos.rows = filtered.rows
+
+
+# ------------------------------------------------------------------
+# DUMMY
+# ------------------------------------------------------------------
+#
+# Note: This is a global variable holding fake to-do list data.
+# It's used to simulate a database for testing
+#
+# ------------------------------------------------------------------
+
+mock_todos = ToDoList(
+    [
+        ToDo("Task 1").with_id(1),
+        ToDo("Task 2").with_id(2),
+        ToDo("Task 3").with_id(3),
+        ToDo("Task 4").with_id(4),
+        ToDo("Task 5").with_id(5),
+    ]
+)

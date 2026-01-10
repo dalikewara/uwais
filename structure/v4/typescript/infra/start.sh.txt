@@ -1,0 +1,5 @@
+#!/bin/sh
+
+./node_modules/.bin/tsc || tsc
+./node_modules/.bin/tsc-alias || tsc-alias
+echo "running './dist/main.js'" && node ./dist/main.js

@@ -1,0 +1,239 @@
+// ------------------------------------------------------------------
+// Contract
+// ------------------------------------------------------------------
+//
+// This is the "Contract" or agreement for the domain model.
+// It's called a contract because it only defines what needs to be done,
+// without worrying about how to do it.
+// Think of it as a blueprint, not the actual implementation.
+//
+// ------------------------------------------------------------------
+
+/**
+ * Repository is the blueprint for the data storage layer.
+ * It acts as a bridge between the business logic and the database or other data sources.
+ * This allows the data sources to be changed without altering the business logic.
+ *
+ * @interface
+ * @abstract
+ */
+class Repository {}
+
+/**
+ * UseCase is the blueprint for the business logic.
+ * All the business rules for `{{TEMPLATE_NAME_PASCAL_CASE}}` operations are here, such as how to add, edit, or retrieve data.
+ * It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
+ *
+ * @interface
+ * @abstract
+ */
+class UseCase {}
+
+// ------------------------------------------------------------------
+// Model
+// ------------------------------------------------------------------
+//
+// This model is the representation of {{TEMPLATE_NAME_PASCAL_CASE}} data.
+//
+// ------------------------------------------------------------------
+
+/**
+ * {{TEMPLATE_NAME_PASCAL_CASE}} is the main data structure for {{TEMPLATE_NAME_PASCAL_CASE}} data.
+ *
+ * @class
+ */
+class {{TEMPLATE_NAME_PASCAL_CASE}} {
+    /**
+     * @param
+     */
+    constructor() {
+        return;
+    }
+
+    /**
+     * @returns {DTO1}
+     */
+    toDTO1() {
+        return new DTO1({});
+    }
+}
+
+/**
+ * {{TEMPLATE_NAME_PASCAL_CASE}}List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
+ *
+ * @class
+ */
+class {{TEMPLATE_NAME_PASCAL_CASE}}List {
+    /**
+     * @type {{{TEMPLATE_NAME_PASCAL_CASE}}[]}
+     */
+    rows = [];
+
+    // By using this style, you can add additional properties that might be useful
+    // ...
+
+    /**
+     * @param {{{TEMPLATE_NAME_PASCAL_CASE}}[]} rows
+     */
+    constructor(rows = []) {
+        for (let i = 0; i < rows.length; i++) {
+            this.push(rows[i]);
+        }
+    }
+
+    /**
+     * @param {{{TEMPLATE_NAME_PASCAL_CASE}}} row
+     *
+     * @returns {void}
+     */
+    push(row) {
+        this.rows.push(row);
+    }
+
+    /**
+     * @returns {{{TEMPLATE_NAME_PASCAL_CASE}} | null}
+     */
+    first() {
+        if (this.len() < 1) {
+            return null
+        }
+
+        return this.rows[0];
+    }
+
+    /**
+     * @returns {{{TEMPLATE_NAME_PASCAL_CASE}} | null}
+     */
+    last() {
+        if (this.len() < 1) {
+            return null
+        }
+
+       return this.rows[this.rows.length - 1];
+    }
+
+    /**
+     * @returns {number}
+     */
+    len() {
+        return this.rows.length;
+    }
+
+    /**
+     * @returns {DTO1List}
+     */
+    toDTO1List() {
+        let result = new DTO1List();
+
+        for (let i = 0; i < this.len(); i++) {
+            result.push(this.rows[i].toDTO1());
+        }
+
+        return result;
+    }
+}
+
+// ------------------------------------------------------------------
+// DTO (Data Transfer Object)
+// ------------------------------------------------------------------
+//
+// A DTO is just for transferring data between layers or outside the system.
+// It has no business logic at all; it's just a data "wrapper."
+//
+// ------------------------------------------------------------------
+
+/**
+ * DTO1 is a data transfer version of `{{TEMPLATE_NAME_PASCAL_CASE}}`,
+ * containing only the data that will be sent out (e.g., to the frontend).
+ *
+ * @class
+ */
+class DTO1 {
+    /**
+     * @param {Object} obj
+     */
+    constructor(obj = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+/**
+ * DTO1List is a collection of `DTO1` items.
+ *
+ * @class
+ */
+class DTO1List {
+    /**
+     * @type {DTO1[]}
+     */
+    rows = [];
+
+    // By using this style, you can add additional properties that might be useful
+    // ...
+
+    /**
+     * @param {DTO1[]} rows
+     */
+    constructor(rows = []) {
+        for (let i = 0; i < rows.length; i++) {
+            this.push(rows[i]);
+        }
+    }
+
+    /**
+     * @param {DTO1} row
+     *
+     * @returns {void}
+     */
+    push(row) {
+        this.rows.push(row);
+    }
+}
+
+// ------------------------------------------------------------------
+// Filter
+// ------------------------------------------------------------------
+//
+// This is a data structure for filtering or searching data.
+//
+// ------------------------------------------------------------------
+
+/**
+ * QueryFilter holds the parameters for data searches.
+ *
+ * @class
+ */
+class QueryFilter {}
+
+// ------------------------------------------------------------------
+// Input
+// ------------------------------------------------------------------
+//
+// Input is data that enters the system, usually from an HTTP request.
+//
+// ------------------------------------------------------------------
+
+/**
+ * InputGetAll is the input data for retrieving {{TEMPLATE_NAME_PASCAL_CASE}} list.
+ *
+ * @class
+ */
+class InputGetAll {
+    /**
+     * @param {Object} obj
+     */
+    constructor(obj = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+module.exports = {
+    Repository,
+    UseCase,
+    {{TEMPLATE_NAME_PASCAL_CASE}},
+    {{TEMPLATE_NAME_PASCAL_CASE}}List,
+    DTO1,
+    DTO1List,
+    QueryFilter,
+    InputGetAll
+};

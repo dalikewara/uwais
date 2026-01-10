@@ -1,0 +1,104 @@
+const { UseCase, Repository, ToDo, QueryFilter, InputAdd, InputEdit, InputRemove, DTO1, DTO1List } = require('../../domain/todo');
+
+/**
+ * UseCaseV1 is a basic business logic implementation of the `UseCase` blueprint.
+ * It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
+ * Its job is to orchestrate the steps needed to complete a user action.
+ *
+ * @class
+ * @extends {UseCase}
+ * @implements {UseCase}
+ */
+class UseCaseV1 extends UseCase  {
+    /**
+     * @type {Repository}
+     */
+    todoRepository;
+
+    /**
+     * @param {Repository} todoRepository
+     *
+     * @throws {TypeError}
+     */
+    constructor(todoRepository) {
+        super();
+
+        this.todoRepository = todoRepository;
+
+        this.validate();
+    }
+
+    /**
+     * @returns {void}
+     * @throws {TypeError}
+     */
+    validate() {
+        if (!(this.todoRepository instanceof Repository)) {
+            throw new TypeError('`todoRepository` must be an instance of ToDo Repository blueprint');
+        }
+    }
+
+    /**
+     * @param {InputGetAll} input
+     *
+     * @returns {Promise<DTO1List>}
+     * @throws {Error}
+     */
+    async getAll(input) {
+        let todos = await this.todoRepository.findAll(new QueryFilter().withLimit(input.limit));
+
+        return todos.toDTO1List();
+    }
+
+    /**
+     * @param {InputAdd} input
+     *
+     * @returns {Promise<DTO1>}
+     * @throws {Error}
+     */
+    async add(input) {
+        let todo = new ToDo(input.title);
+
+        await this.todoRepository.insert(todo);
+
+        return todo.toDTO1();
+    }
+
+    /**
+     * @param {InputEdit} input
+     *
+     * @returns {Promise<DTO1>}
+     * @throws {Error}
+     */
+    async edit(input) {
+        let todo = await this.todoRepository.findOne(new QueryFilter().withID(input.id));
+        if (todo == null) {
+            throw new Error('Data not found');
+        }
+
+        todo.title = input.title;
+
+        await this.todoRepository.update(todo);
+
+        return todo.toDTO1();
+    }
+
+    /**
+     * @param {InputRemove} input
+     *
+     * @returns {Promise<void>}
+     * @throws {Error}
+     */
+    async remove(input) {
+        let todo = await this.todoRepository.findOne(new QueryFilter().withID(input.id));
+        if (todo == null) {
+            throw new Error('Data not found');
+        }
+
+        await this.todoRepository.delete(todo);
+    }
+}
+
+module.exports = {
+    UseCaseV1,
+};

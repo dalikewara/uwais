@@ -1,0 +1,73 @@
+from domain.todo import (
+    DTO1,
+    DTO1List,
+    InputAdd,
+    InputEdit,
+    InputGetAll,
+    InputRemove,
+    QueryFilter,
+    Repository,
+    ToDo,
+    UseCase,
+)
+
+
+class UseCaseV1(UseCase):
+    """
+    UseCaseV1 is a basic business logic implementation of the `UseCase` blueprint.
+    It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
+    Its job is to orchestrate the steps needed to complete a user action.
+    """
+
+    todo_repository: Repository
+
+    def __init__(self, todo_repository: Repository):
+        self.todo_repository = todo_repository
+
+    def get_all(self, inpt: InputGetAll) -> DTO1List:
+        """
+        Raises:
+            Exception
+        """
+        todos = self.todo_repository.find_all(
+            query_filter=QueryFilter().with_limit(inpt.limit)
+        )
+
+        return todos.to_DTO1List()
+
+    def add(self, inpt: InputAdd) -> DTO1:
+        """
+        Raises:
+            Exception
+        """
+        todo = ToDo(title=inpt.title)
+
+        self.todo_repository.insert(todo)
+
+        return todo.to_dto1()
+
+    def edit(self, inpt: InputEdit) -> DTO1:
+        """
+        Raises:
+            Exception
+        """
+        todo = self.todo_repository.find_one(QueryFilter().with_id(inpt.id))
+        if todo is None:
+            raise Exception("Data not found")
+
+        todo.title = inpt.title
+
+        self.todo_repository.update(todo)
+
+        return todo.to_dto1()
+
+    def remove(self, inpt: InputRemove) -> None:
+        """
+        Raises:
+            Exception
+        """
+        todo = self.todo_repository.find_one(QueryFilter().with_id(inpt.id))
+        if todo is None:
+            raise Exception("Data not found")
+
+        self.todo_repository.delete(todo)

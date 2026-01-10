@@ -1,0 +1,17 @@
+import { Repository } from '@domain/{{TEMPLATE_NAME}}';
+
+/**
+ * RepositoryV1 is a basic implementation of the `Repository` interface that
+ * simulates a connection to a database.
+ *
+ * @class
+ * @implements {Repository}
+ */
+export class RepositoryV1 implements Repository  {
+    // In a real app, you might want to inject a database connection here.
+    // private readonly db: null;
+
+    constructor() {}
+
+    // ...
+}

@@ -1,0 +1,72 @@
+package todo
+
+import (
+	"context"
+	"errors"
+
+	"{{MODULE_NAME}}/domain"
+)
+
+// useCaseV1 is a basic business logic implementation of the `domain.ToDoUseCase` interface.
+// It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
+// Its job is to orchestrate the steps needed to complete a user action.
+type useCaseV1 struct {
+	todoRepository domain.ToDoRepository
+}
+
+func (u *useCaseV1) GetAllCtx(ctx context.Context, input domain.ToDoInputGetAll) (domain.ToDoDTO1List, error) {
+	todos, err := u.todoRepository.FindAllCtx(ctx, domain.ToDoQueryFilter{}.WithLimit(input.Limit))
+	if err != nil {
+		return domain.ToDoDTO1List{}, err
+	}
+
+	return todos.ToDTO1List(), nil
+}
+
+func (u *useCaseV1) AddCtx(ctx context.Context, input domain.ToDoInputAdd) (domain.ToDoDTO1, error) {
+	todo := domain.NewToDo(input.Title)
+
+	if err := u.todoRepository.InsertCtx(ctx, todo); err != nil {
+		return domain.ToDoDTO1{}, err
+	}
+
+	return todo.ToDTO1(), nil
+}
+
+func (u *useCaseV1) EditCtx(ctx context.Context, input domain.ToDoInputEdit) (domain.ToDoDTO1, error) {
+	todo, err := u.todoRepository.FindOneCtx(ctx, domain.ToDoQueryFilter{}.WithID(input.ID))
+	if err != nil {
+		return domain.ToDoDTO1{}, err
+	}
+	if todo == nil {
+		return domain.ToDoDTO1{}, errors.New("data not found")
+	}
+
+	todo.Title = input.Title
+
+	if err = u.todoRepository.UpdateCtx(ctx, todo); err != nil {
+		return domain.ToDoDTO1{}, err
+	}
+
+	return todo.ToDTO1(), nil
+}
+
+func (u *useCaseV1) RemoveCtx(ctx context.Context, input domain.ToDoInputRemove) error {
+	todo, err := u.todoRepository.FindOneCtx(ctx, domain.ToDoQueryFilter{}.WithID(input.ID))
+	if err != nil {
+		return err
+	}
+	if todo == nil {
+		return errors.New("data not found")
+	}
+
+	return u.todoRepository.DeleteCtx(ctx, todo)
+}
+
+// NewUseCaseV1 creates a new instance of the `useCaseV1` struct
+// that implements `domain.ToDoUseCase` interface.
+func NewUseCaseV1(todoRepository domain.ToDoRepository) domain.ToDoUseCase {
+	return &useCaseV1{
+		todoRepository: todoRepository,
+	}
+}

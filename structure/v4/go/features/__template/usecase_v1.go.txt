@@ -1,0 +1,20 @@
+package {{TEMPLATE_NAME}}
+
+import "{{MODULE_NAME}}/domain"
+
+// useCaseV1 is a basic business logic implementation of the `domain.{{TEMPLATE_NAME_PASCAL_CASE}}UseCase` interface.
+// It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
+// Its job is to orchestrate the steps needed to complete a user action.
+type useCaseV1 struct {
+	{{TEMPLATE_NAME}}Repository domain.{{TEMPLATE_NAME_PASCAL_CASE}}Repository
+}
+
+// ...
+
+// NewUseCaseV1 creates a new instance of the `useCaseV1` struct
+// that implements `domain.{{TEMPLATE_NAME_PASCAL_CASE}}UseCase` interface.
+func NewUseCaseV1({{TEMPLATE_NAME}}Repository domain.{{TEMPLATE_NAME_PASCAL_CASE}}Repository) domain.{{TEMPLATE_NAME_PASCAL_CASE}}UseCase {
+	return &useCaseV1{
+		{{TEMPLATE_NAME}}Repository: {{TEMPLATE_NAME}}Repository,
+	}
+}

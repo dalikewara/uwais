@@ -1,0 +1,130 @@
+use async_trait::async_trait;
+
+use crate::domain::todo as domain_todo;
+
+/// Impl is a basic implementation of the `domain::todo::Repository` trait that
+/// simulates a connection to a Postgres database.
+///
+/// Note: This layer simulates Postgres database access for demonstration and testing purposes.
+/// It does not connect to a real Postgres database.
+pub struct Impl {
+    // In a real app, you might want to inject a database connection here.
+    // db: Option<T>,
+}
+
+impl Impl {
+    pub fn new() -> Self {
+        Self {}
+    }
+}
+
+#[async_trait]
+impl domain_todo::Repository for Impl {
+    async fn find_all(
+        &self,
+        query_filter: domain_todo::QueryFilter,
+    ) -> Result<domain_todo::ToDoList, String> {
+        let mock_todos = MOCK_TODOS.lock().unwrap();
+
+        if let Some(id) = query_filter.id {
+            for row in &mock_todos.rows {
+                if row.id == id {
+                    return Ok(domain_todo::ToDoList::new(vec![row.clone()]));
+                }
+            }
+
+            return Ok(domain_todo::ToDoList::default());
+        }
+
+        let mut limit = query_filter.limit as usize;
+        if limit < 1 {
+            limit = mock_todos.len();
+        }
+
+        Ok(domain_todo::ToDoList::new(
+            mock_todos.rows.iter().take(limit).cloned().collect(),
+        ))
+    }
+
+    async fn find_one(
+        &self,
+        query_filter: domain_todo::QueryFilter,
+    ) -> Result<Option<domain_todo::ToDo>, String> {
+        match self.find_all(query_filter).await {
+            Ok(rows) => Ok(rows.first().cloned()),
+            Err(err) => Err(err),
+        }
+    }
+
+    async fn insert(&self, data: &mut domain_todo::ToDo) -> Result<(), String> {
+        if data.title.is_empty() {
+            return Err(String::from("Cannot insert empty data"));
+        }
+
+        let mut mock_todos = MOCK_TODOS.lock().unwrap();
+        if let Some(last) = mock_todos.last() {
+            data.id = last.id + 1;
+        }
+
+        data.set_created_at_now();
+
+        mock_todos.push(data.to_owned());
+
+        Ok(())
+    }
+
+    async fn update(&self, data: &mut domain_todo::ToDo) -> Result<(), String> {
+        if data.id < 1 || data.title.is_empty() {
+            return Err(String::from("Cannot update empty data"));
+        }
+
+        let mut mock_todos = MOCK_TODOS.lock().unwrap();
+
+        data.set_updated_at_now();
+
+        for row in &mut mock_todos.rows {
+            if row.id == data.id {
+                *row = data.clone();
+                break;
+            }
+        }
+
+        Ok(())
+    }
+
+    async fn delete(&self, data: &domain_todo::ToDo) -> Result<(), String> {
+        if data.id < 1 {
+            return Err(String::from("Cannot delete empty data"));
+        }
+
+        let mut mock_todos = MOCK_TODOS.lock().unwrap();
+
+        mock_todos.rows.retain(|row| row.id != data.id);
+
+        Ok(())
+    }
+}
+
+// ------------------------------------------------------------------
+// DUMMY
+// ------------------------------------------------------------------
+//
+// Note: This is a global variable holding fake to-do list data.
+// It's used to simulate a database for testing
+//
+// ------------------------------------------------------------------
+
+use once_cell::sync::Lazy;
+use std::sync::Mutex;
+
+static MOCK_TODOS: Lazy<Mutex<domain_todo::ToDoList>> = Lazy::new(|| {
+    let todos = domain_todo::ToDoList::new(vec![
+        domain_todo::ToDo::new("Task 1".to_string()).with_id(1),
+        domain_todo::ToDo::new("Task 2".to_string()).with_id(2),
+        domain_todo::ToDo::new("Task 3".to_string()).with_id(3),
+        domain_todo::ToDo::new("Task 4".to_string()).with_id(4),
+        domain_todo::ToDo::new("Task 5".to_string()).with_id(5),
+    ]);
+
+    Mutex::new(todos)
+});

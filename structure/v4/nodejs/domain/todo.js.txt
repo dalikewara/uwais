@@ -1,0 +1,524 @@
+// ------------------------------------------------------------------
+// Contract
+// ------------------------------------------------------------------
+//
+// This is the "Contract" or agreement for the domain model.
+// It's called a contract because it only defines what needs to be done,
+// without worrying about how to do it.
+// Think of it as a blueprint, not the actual implementation.
+//
+// ------------------------------------------------------------------
+
+/**
+ * Repository is the blueprint for the data storage layer.
+ * It acts as a bridge between the business logic and the database or other data sources.
+ * This allows the data sources to be changed without altering the business logic.
+ *
+ * @interface
+ * @abstract
+ */
+class Repository {
+    /**
+     * @param {QueryFilter} queryFilter
+     *
+     * @returns {Promise<ToDoList>}
+     * @throws {Error}
+     */
+    async findAll(queryFilter) {
+        throw new Error('Not implemented!');
+    }
+
+    /**
+     * @param {QueryFilter} queryFilter
+     *
+     * @returns {Promise<ToDo | null>}
+     * @throws {Error}
+     */
+    async findOne(queryFilter) {
+        throw new Error('Not implemented!');
+    }
+
+    /**
+     * @param {ToDo} data
+     *
+     * @returns {Promise<void>}
+     * @throws {Error}
+     */
+    async insert(data) {
+        throw new Error('Not implemented!');
+    }
+
+    /**
+     * @param {ToDo} data
+     *
+     * @returns {Promise<void>}
+     * @throws {Error}
+     */
+    async update(data) {
+        throw new Error('Not implemented!');
+    }
+
+    /**
+     * @param {ToDo} data
+     *
+     * @returns {Promise<void>}
+     * @throws {Error}
+     */
+    async delete(data) {
+        throw new Error('Not implemented!');
+    }
+}
+
+/**
+ * UseCase is the blueprint for the business logic.
+ * All the business rules for todo operations are here, such as how to add, edit, or retrieve data.
+ * It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
+ *
+ * @interface
+ * @abstract
+ */
+class UseCase {
+    /**
+     * @param {InputGetAll} input
+     *
+     * @returns {Promise<DTO1List>}
+     * @throws {Error}
+     */
+    async getAll(input) {
+        throw new Error('Not implemented!');
+    }
+
+    /**
+     * @param {InputAdd} input
+     *
+     * @returns {Promise<DTO1>}
+     * @throws {Error}
+     */
+    async add(input) {
+        throw new Error('Not implemented!');
+    }
+
+    /**
+     * @param {InputEdit} input
+     *
+     * @returns {Promise<DTO1>}
+     * @throws {Error}
+     */
+    async edit(input) {
+        throw new Error('Not implemented!');
+    }
+
+    /**
+     * @param {InputRemove} input
+     *
+     * @returns {Promise<void>}
+     * @throws {Error}
+     */
+    async remove(input) {
+        throw new Error('Not implemented!');
+    }
+}
+
+// ------------------------------------------------------------------
+// Model
+// ------------------------------------------------------------------
+//
+// This model is the representation of todo data.
+// It stores data and has methods (functions) to process the data itself.
+//
+// ------------------------------------------------------------------
+
+/**
+ * ToDo is the main data structure for storing task data.
+ * The `id` is for identification, the `title` is for the title,
+ * and `created_at` and `updated_at` track when it was created and updated.
+ *
+ * @class
+ */
+class ToDo {
+    /**
+     * @type {number}
+     */
+    id = 0;
+
+    /**
+     * @type {string}
+     */
+    title = '';
+
+    /**
+     * @type {Date}
+     */
+    created_at = new Date();
+
+    /**
+     * @type {Date}
+     */
+    updated_at = new Date();
+
+    /**
+     * @param {string} title
+     */
+    constructor(title = '') {
+        let now = new Date();
+
+        this.title = title;
+        this.created_at = now;
+        this.updated_at = now;
+    }
+
+    /**
+     * @returns {void}
+     */
+    setCreatedAtNow() {
+        this.created_at = new Date();
+    }
+
+    /**
+     * @returns {void}
+     */
+    setUpdatedAtNow() {
+        this.updated_at = new Date();
+    }
+
+    /**
+     * @returns {string}
+     */
+    getFormattedCreatedAt() {
+        return this.created_at.toISOString();
+    }
+
+    /**
+     * @returns {string}
+     */
+    getFormattedUpdatedAt() {
+        return this.updated_at.toISOString();
+    }
+
+    /**
+     * @param {number} id
+     *
+     * @returns {ToDo}
+     */
+    withID(id) {
+        this.id = id;
+
+        return this;
+    }
+
+    /**
+     * @returns {DTO1}
+     */
+    toDTO1() {
+        return new DTO1({
+            id: this.id,
+            title: this.title,
+            created_at: this.getFormattedCreatedAt(),
+            updated_at: this.getFormattedUpdatedAt(),
+        });
+    }
+}
+
+/**
+ * ToDoList is a collection of `ToDo` items.
+ *
+ * @class
+ */
+class ToDoList {
+    /**
+     * @type {ToDo[]}
+     */
+    rows = [];
+
+    // By using this style, you can add additional properties that might be useful
+    // ...
+
+    /**
+     * @param {ToDo[]} rows
+     */
+    constructor(rows = []) {
+        for (let i = 0; i < rows.length; i++) {
+            this.push(rows[i]);
+        }
+    }
+
+    /**
+     * @param {ToDo} row
+     *
+     * @returns {void}
+     */
+    push(row) {
+        this.rows.push(row);
+    }
+
+    /**
+     * @returns {ToDo | null}
+     */
+    first() {
+        if (this.len() < 1) {
+            return null
+        }
+
+        return this.rows[0];
+    }
+
+    /**
+     * @returns {ToDo | null}
+     */
+    last() {
+        if (this.len() < 1) {
+            return null
+        }
+
+       return this.rows[this.rows.length - 1];
+    }
+
+    /**
+     * @returns {number}
+     */
+    len() {
+        return this.rows.length;
+    }
+
+    /**
+     * @returns {DTO1List}
+     */
+    toDTO1List() {
+        let result = new DTO1List();
+
+        for (let i = 0; i < this.len(); i++) {
+            result.push(this.rows[i].toDTO1());
+        }
+
+        return result;
+    }
+}
+
+// ------------------------------------------------------------------
+// DTO (Data Transfer Object)
+// ------------------------------------------------------------------
+//
+// A DTO is just for transferring data between layers or outside the system.
+// It has no business logic at all; it's just a data "wrapper."
+//
+// ------------------------------------------------------------------
+
+/**
+ * DTO1 is a data transfer version of `ToDo`,
+ * containing only the data that will be sent out (e.g., to the frontend).
+ * Note that `created_at` and `updated_at` are now strings, not `Date` anymore.
+ *
+ * @class
+ */
+class DTO1 {
+    /**
+     * @type {number}
+     */
+    id = 0;
+
+    /**
+     * @type {string}
+     */
+    title = '';
+
+    /**
+     * @type {string}
+     */
+    created_at = '';
+
+    /**
+     * @type {string}
+     */
+    updated_at = '';
+
+    /**
+     * @param {Object} obj
+     */
+    constructor(obj = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+/**
+ * DTO1List is a collection of `DTO1` items.
+ *
+ * @class
+ */
+class DTO1List {
+    /**
+     * @type {DTO1[]}
+     */
+    rows = [];
+
+    // By using this style, you can add additional properties that might be useful
+    // ...
+
+    /**
+     * @param {DTO1[]} rows
+     */
+    constructor(rows = []) {
+        for (let i = 0; i < rows.length; i++) {
+            this.push(rows[i]);
+        }
+    }
+
+    /**
+     * @param {DTO1} row
+     *
+     * @returns {void}
+     */
+    push(row) {
+        this.rows.push(row);
+    }
+}
+
+// ------------------------------------------------------------------
+// Filter
+// ------------------------------------------------------------------
+//
+// This is a data structure for filtering or searching data.
+// For example, to search for a todo with a specific `id`.
+//
+// ------------------------------------------------------------------
+
+/**
+ * QueryFilter holds the parameters for data searches.
+ *
+ * @class
+ */
+class QueryFilter {
+    /**
+     * @type {number | null | undefined}
+     */
+    id = null;
+
+    /**
+     * @type {number}
+     */
+    limit = 0;
+
+    /**
+     * @param {number} id
+     *
+     * @returns {QueryFilter}
+     */
+    withID(id) {
+        this.id = id;
+
+        return this;
+    }
+
+    /**
+     * @param {number} limit
+     *
+     * @returns {QueryFilter}
+     */
+    withLimit(limit) {
+        this.limit = limit;
+
+        return this;
+    }
+}
+
+// ------------------------------------------------------------------
+// Input
+// ------------------------------------------------------------------
+//
+// Input is data that enters the system, usually from an HTTP request.
+//
+// ------------------------------------------------------------------
+
+/**
+ * InputGetAll is the input data for retrieving todos.
+ *
+ * @class
+ */
+class InputGetAll {
+    /**
+     * @type {number}
+     */
+    limit = 0;
+
+    /**
+     * @param {Object} obj
+     */
+    constructor(obj = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+/**
+ * InputAdd is the input data for adding a new todo.
+ *
+ * @class
+ */
+class InputAdd {
+    /**
+     * @type {string}
+     */
+    title = '';
+
+    /**
+     * @param {Object} obj
+     */
+    constructor(obj = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+/**
+ * InputEdit is the input data for updating an existing todo.
+ *
+ * @class
+ */
+class InputEdit {
+    /**
+     * @type {number}
+     */
+    id = 0;
+
+    /**
+     * @type {string}
+     */
+    title = '';
+
+    /**
+     * @param {Object} obj
+     */
+    constructor(obj = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+/**
+ * InputRemove is the input data for deleting a todo.
+ *
+ * @class
+ */
+class InputRemove {
+    /**
+     * @type {number}
+     */
+    id = 0;
+
+    /**
+     * @param {Object} obj
+     */
+    constructor(obj = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+module.exports = {
+    Repository,
+    UseCase,
+    ToDo,
+    ToDoList,
+    DTO1,
+    DTO1List,
+    QueryFilter,
+    InputGetAll,
+    InputAdd,
+    InputEdit,
+    InputRemove,
+};

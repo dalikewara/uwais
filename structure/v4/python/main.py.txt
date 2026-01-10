@@ -1,0 +1,54 @@
+from flask import Flask
+
+from features.todo import HttpServiceFlaskV1 as ToDoHttpServiceFlaskV1
+from features.todo import RepositoryPostgresV1 as ToDoRepositoryPostgresV1
+from features.todo import UseCaseV1 as ToDoUseCaseV1
+
+# Application initialization
+
+port = 8080
+
+# Repositories setup
+
+todo_repository_postgres_v1 = ToDoRepositoryPostgresV1()
+
+# Use cases setup
+
+todo_usecase_v1 = ToDoUseCaseV1(todo_repository=todo_repository_postgres_v1)
+
+# HTTP service setup, router and listener using Flask
+
+flask_app = Flask(__name__)
+
+todo_http_service_flask_v1 = ToDoHttpServiceFlaskV1(todo_usecase=todo_usecase_v1)
+
+flask_app.add_url_rule(
+    methods=["GET"],
+    rule="/todos",
+    endpoint="todos",
+    view_func=todo_http_service_flask_v1.get_all,
+)
+flask_app.add_url_rule(
+    methods=["POST"],
+    rule="/todo/add",
+    endpoint="todo_add",
+    view_func=todo_http_service_flask_v1.add,
+)
+flask_app.add_url_rule(
+    methods=["POST"],
+    rule="/todo/edit",
+    endpoint="todo_edit",
+    view_func=todo_http_service_flask_v1.edit,
+)
+flask_app.add_url_rule(
+    methods=["POST"],
+    rule="/todo/remove",
+    endpoint="todo_remove",
+    view_func=todo_http_service_flask_v1.remove,
+)
+
+
+if __name__ == "__main__":
+    print("Flask runs on port: %d" % port)
+
+    flask_app.run(port=port)

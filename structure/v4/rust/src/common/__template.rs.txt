@@ -1,0 +1,4 @@
+/// {{TEMPLATE_NAME}} implements the core logic for this functionality.
+pub fn {{TEMPLATE_NAME}}() {
+    return
+}

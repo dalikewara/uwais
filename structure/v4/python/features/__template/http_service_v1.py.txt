@@ -1,0 +1,16 @@
+from __future__ import annotations
+
+from domain.{{TEMPLATE_NAME}} import UseCase
+
+
+class HttpServiceV1:
+    """
+    HttpServiceV1 is an HTTP service handler.
+    It's responsible for handling and calling the right use case methods.
+    Avoid putting any business logic or data access code in this layer.
+    """
+
+    {{TEMPLATE_NAME}}_usecase: UseCase
+
+    def __init__(self, {{TEMPLATE_NAME}}_usecase: UseCase):
+        self.{{TEMPLATE_NAME}}_usecase = {{TEMPLATE_NAME}}_usecase

@@ -1,0 +1,30 @@
+const { Server } = require('hyper-express');
+
+const { RepositoryPostgresV1: ToDoRepositoryPostgresV1, UseCaseV1: ToDoUseCaseV1, HttpServiceHyperExpressV1: ToDoHttpServiceHyperExpressV1 } = require('./features/todo');
+
+// Application initialization
+
+let port = 8080;
+
+// Repositories setup
+
+const todoRepositoryPostgresV1 = new ToDoRepositoryPostgresV1();
+
+// Use cases setup
+
+const todoUseCaseV1 = new ToDoUseCaseV1(todoRepositoryPostgresV1);
+
+// HTTP service setup, router and listener using HyperExpress
+
+const hyperExpressApp = new Server();
+
+const todoHttpServiceHyperExpressV1 = new ToDoHttpServiceHyperExpressV1(todoUseCaseV1);
+
+hyperExpressApp.get('/todos', todoHttpServiceHyperExpressV1.getAll);
+hyperExpressApp.post('/todo/add', todoHttpServiceHyperExpressV1.add);
+hyperExpressApp.post('/todo/edit', todoHttpServiceHyperExpressV1.edit);
+hyperExpressApp.post('/todo/remove', todoHttpServiceHyperExpressV1.remove);
+
+hyperExpressApp.listen(port)
+    .then(() => console.log(`HyperExpress runs on port: ${port}`))
+    .catch((err) => console.log(err));

@@ -1,0 +1,65 @@
+import { UseCase, Repository, ToDo, DTO1, DTO1List, QueryFilter, InputGetAll, InputAdd, InputEdit, InputRemove } from '@domain/todo';
+
+/**
+ * UseCaseV1 is a basic business logic implementation of the `UseCase` interface.
+ * It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
+ * Its job is to orchestrate the steps needed to complete a user action.
+ *
+ * @class
+ * @implements {UseCase}
+ */
+export class UseCaseV1 implements UseCase  {
+    private readonly todoRepository: Repository;
+
+    constructor(todoRepository: Repository) {
+        this.todoRepository = todoRepository;
+    }
+
+    /**
+     * @throws {Error}
+     */
+    async getAll(input: InputGetAll): Promise<DTO1List> {
+        let todos = await this.todoRepository.findAll(new QueryFilter().withLimit(input.limit));
+
+        return todos.toDTO1List();
+    }
+
+    /**
+     * @throws {Error}
+     */
+    async add(input: InputAdd): Promise<DTO1> {
+        let todo = new ToDo(input.title);
+
+        await this.todoRepository.insert(todo);
+
+        return todo.toDTO1();
+    }
+
+    /**
+     * @throws {Error}
+     */
+    async edit(input: InputEdit): Promise<DTO1> {
+        let todo = await this.todoRepository.findOne(new QueryFilter().withID(input.id));
+        if (todo == null) {
+            throw new Error('Data not found');
+        }
+
+        todo.title = input.title;
+
+        await this.todoRepository.update(todo);
+
+        return todo.toDTO1();
+    }
+
+    /**
+     * @throws {Error}
+     */
+    async remove(input: InputRemove): Promise<void> {
+        let todo = await this.todoRepository.findOne(new QueryFilter().withID(input.id));
+        if (todo == null) {
+            throw new Error('Data not found');
+        }
+
+        await this.todoRepository.delete(todo);
+    }
+}

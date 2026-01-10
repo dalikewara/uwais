@@ -1,0 +1,146 @@
+use async_trait::async_trait;
+use serde::{Deserialize, Serialize};
+
+// ------------------------------------------------------------------
+// Contract
+// ------------------------------------------------------------------
+//
+// This is the "Contract" or agreement for the domain model.
+// It's called a contract because it only defines what needs to be done,
+// without worrying about how to do it.
+// Think of it as a blueprint, not the actual implementation.
+//
+// ------------------------------------------------------------------
+
+/// Repository is the blueprint for the data storage layer.
+/// It acts as a bridge between the business logic and the database or other data sources.
+/// This allows the data sources to be changed without altering the business logic.
+#[async_trait]
+pub trait Repository: Send + Sync {}
+
+/// UseCase is the blueprint for the business logic.
+/// All the business rules for {{TEMPLATE_NAME_PASCAL_CASE}} operations are here, such as how to add, edit, or retrieve data.
+/// It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
+#[async_trait]
+pub trait UseCase: Send + Sync {}
+
+// ------------------------------------------------------------------
+// Model
+// ------------------------------------------------------------------
+//
+// This model is the representation of {{TEMPLATE_NAME_PASCAL_CASE}} data.
+//
+// ------------------------------------------------------------------
+
+/// {{TEMPLATE_NAME_PASCAL_CASE}} is the main data structure for {{TEMPLATE_NAME_PASCAL_CASE}} data.
+#[derive(Default, Clone)]
+pub struct {{TEMPLATE_NAME_PASCAL_CASE}} {}
+
+impl {{TEMPLATE_NAME_PASCAL_CASE}} {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn to_dto1(self) -> DTO1 {
+        DTO1 {}
+    }
+}
+
+/// {{TEMPLATE_NAME_PASCAL_CASE}}List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
+#[derive(Default)]
+pub struct {{TEMPLATE_NAME_PASCAL_CASE}}List {
+    pub rows: Vec<{{TEMPLATE_NAME_PASCAL_CASE}}>,
+    // By using this style, you can add additional properties that might be useful
+    // ...
+}
+
+impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
+    pub fn new(rows: Vec<{{TEMPLATE_NAME_PASCAL_CASE}}>) -> Self {
+        let mut result = Self::default();
+
+        for row in rows {
+            result.push(row);
+        }
+
+        result
+    }
+
+    pub fn push(&mut self, row: {{TEMPLATE_NAME_PASCAL_CASE}}) {
+        self.rows.push(row);
+    }
+
+    pub fn first(&self) -> Option<&{{TEMPLATE_NAME_PASCAL_CASE}}> {
+        self.rows.first()
+    }
+
+    pub fn last(&self) -> Option<&{{TEMPLATE_NAME_PASCAL_CASE}}> {
+        self.rows.last()
+    }
+
+    pub fn len(&self) -> usize {
+        self.rows.len()
+    }
+
+    pub fn to_dto1_list(self) -> DTO1List {
+        let mut result = DTO1List::default();
+
+        for row in self.rows {
+            result.push(row.to_dto1())
+        }
+
+        result
+    }
+}
+
+// ------------------------------------------------------------------
+// DTO (Data Transfer Object)
+// ------------------------------------------------------------------
+//
+// A DTO is just for transferring data between layers or outside the system.
+// It has no business logic at all; it's just a data "wrapper."
+//
+// ------------------------------------------------------------------
+
+/// DTO1 is a data transfer version of `{{TEMPLATE_NAME_PASCAL_CASE}}`,
+/// containing only the data that will be sent out (e.g., to the frontend).
+#[derive(Default, Serialize)]
+pub struct DTO1 {}
+
+/// DTO1List is a collection of `DTO1` items.
+#[derive(Default, Serialize)]
+pub struct DTO1List {
+    pub rows: Vec<DTO1>,
+    // By using this style, you can add additional properties that might be useful
+    // ...
+}
+
+impl DTO1List {
+    pub fn push(&mut self, row: DTO1) {
+        self.rows.push(row);
+    }
+}
+
+// ------------------------------------------------------------------
+// Filter
+// ------------------------------------------------------------------
+//
+// This is a data structure for filtering or searching data.
+//
+// ------------------------------------------------------------------
+
+/// QueryFilter holds the parameters for data searches.
+#[derive(Default)]
+pub struct QueryFilter {}
+
+// ------------------------------------------------------------------
+// Input
+// ------------------------------------------------------------------
+//
+// Input is data that enters the system, usually from an HTTP request.
+//
+// ------------------------------------------------------------------
+
+/// InputGetAll is the input data for retrieving {{TEMPLATE_NAME_PASCAL_CASE}} list.
+#[derive(Default, Deserialize)]
+#[serde(default)]
+pub struct InputGetAll {}

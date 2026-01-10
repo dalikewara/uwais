@@ -1,0 +1,6 @@
+/**
+ * {{TEMPLATE_NAME}} implements the core logic for this functionality.
+ */
+export function {{TEMPLATE_NAME}}() {
+    return;
+}

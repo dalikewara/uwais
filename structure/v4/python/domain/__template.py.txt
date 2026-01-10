@@ -1,0 +1,163 @@
+from __future__ import annotations
+
+from abc import ABC
+from typing import List
+
+from pydantic import BaseModel
+
+# ------------------------------------------------------------------
+# Contract
+# ------------------------------------------------------------------
+#
+# This is the "Contract" or agreement for the domain model.
+# It's called a contract because it only defines what needs to be done,
+# without worrying about how to do it.
+# Think of it as a blueprint, not the actual implementation.
+#
+# ------------------------------------------------------------------
+
+
+class Repository(ABC):
+    """
+    Repository is the blueprint for the data storage layer.
+    It acts as a bridge between the business logic and the database or other data sources.
+    This allows the data sources to be changed without altering the business logic.
+    """
+
+
+class UseCase(ABC):
+    """
+    UseCase is the blueprint for the business logic.
+    All the business rules for `{{TEMPLATE_NAME_PASCAL_CASE}}` operations are here, such as how to add, edit, or retrieve data.
+    It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
+    """
+
+
+# ------------------------------------------------------------------
+# Model
+# ------------------------------------------------------------------
+#
+# This model is the representation of `{{TEMPLATE_NAME_PASCAL_CASE}}` data.
+#
+# ------------------------------------------------------------------
+class {{TEMPLATE_NAME_PASCAL_CASE}}:
+    """
+    {{TEMPLATE_NAME_PASCAL_CASE}} is the main data structure for {{TEMPLATE_NAME_PASCAL_CASE}} data.
+    """
+
+    def __init__(self):
+        return
+
+    def to_dto1(self) -> DTO1:
+        return DTO1()
+
+
+class {{TEMPLATE_NAME_PASCAL_CASE}}List:
+    """
+    {{TEMPLATE_NAME_PASCAL_CASE}}List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
+    """
+
+    def __init__(self, rows: List[{{TEMPLATE_NAME_PASCAL_CASE}}] | None = None):
+        self.rows: list[{{TEMPLATE_NAME_PASCAL_CASE}}] = []
+
+        # By using this style, you can add additional properties that might be useful
+        # ...
+
+        if rows:
+            for row in rows:
+                self.push(row)
+
+    def push(self, row: {{TEMPLATE_NAME_PASCAL_CASE}}):
+        self.rows.append(row)
+
+    def first(self) -> {{TEMPLATE_NAME_PASCAL_CASE}} | None:
+        if self.len() < 1:
+            return None
+
+        return self.rows[0]
+
+    def last(self) -> {{TEMPLATE_NAME_PASCAL_CASE}} | None:
+        if self.len() < 1:
+            return None
+
+        return self.rows[self.len() - 1]
+
+    def len(self) -> int:
+        return len(self.rows)
+
+    def to_dto1_list(self) -> DTO1List:
+        result = DTO1List()
+
+        for row in self.rows:
+            result.push(row.to_dto1())
+
+        return result
+
+
+# ------------------------------------------------------------------
+# DTO (Data Transfer Object)
+# ------------------------------------------------------------------
+#
+# A DTO is just for transferring data between layers or outside the system.
+# It has no business logic at all; it's just a data "wrapper."
+#
+# ------------------------------------------------------------------
+
+
+class DTO1(BaseModel):
+    """
+    DTO1 is a data transfer version of `{{TEMPLATE_NAME_PASCAL_CASE}}`,
+    containing only the data that will be sent out (e.g., to the frontend).
+    """
+
+
+class DTO1List:
+    """
+    DTO1List is a collection of `DTO1` items.
+    """
+
+    def __init__(self, rows: List[DTO1] | None = None):
+        self.rows: list[DTO1] = []
+
+        # By using this style, you can add additional properties that might be useful
+        # ...
+
+        if rows:
+            for row in rows:
+                self.push(row)
+
+    def push(self, row: DTO1):
+        self.rows.append(row)
+
+
+# ------------------------------------------------------------------
+# Filter
+# ------------------------------------------------------------------
+#
+# This is a data structure for filtering or searching data.
+#
+# ------------------------------------------------------------------
+
+
+class QueryFilter:
+    """
+    QueryFilter holds the parameters for data searches.
+    """
+
+    def __init__(self):
+        return
+
+
+# ------------------------------------------------------------------
+# Input
+# ------------------------------------------------------------------
+#
+# Input is data that enters the system, usually from an HTTP request.
+#
+# ------------------------------------------------------------------
+
+
+class InputGetAll(BaseModel):
+    """
+    InputGetAll is the input data for retrieving {{TEMPLATE_NAME_PASCAL_CASE}} list.
+    """

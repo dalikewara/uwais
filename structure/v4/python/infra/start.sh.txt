@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir tmp || true
+venv/bin/python main.py || python3 main.py || python main.py || py main.py

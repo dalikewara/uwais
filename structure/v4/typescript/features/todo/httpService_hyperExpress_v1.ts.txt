@@ -1,0 +1,64 @@
+import { Request, Response } from 'hyper-express';
+
+import { Response as CommonResponse } from '@common/response';
+import { UseCase, InputGetAll, InputAdd, InputEdit, InputRemove } from '@domain/todo';
+
+/**
+ * HttpServiceHyperExpressV1 is an HTTP service handler using HyperExpress.
+ * It's responsible for routing and calling the right use case methods.
+ * Avoid putting any business logic or data access code in this layer.
+ *
+ * @class
+ */
+export class HttpServiceHyperExpressV1 {
+    todoUseCase: UseCase;
+
+    constructor(todoUseCase: UseCase) {
+        this.todoUseCase = todoUseCase;
+    }
+
+    async getAll(req: Request, res: Response): Promise<void> {
+        try {
+            const input = new InputGetAll(req.query);
+            const result = await this.todoUseCase.getAll(input);
+
+            res.status(200).json(new CommonResponse().ok(result.rows));
+        } catch (err) {
+            res.status(500).json(new CommonResponse().error(err));
+        }
+    }
+
+    async add(req: Request, res: Response): Promise<void> {
+        try {
+            const input = new InputAdd(await req.json());
+            const result = await this.todoUseCase.add(input);
+
+            res.status(200).json(new CommonResponse().ok(result));
+        } catch (err) {
+            res.status(500).json(new CommonResponse().error(err));
+        }
+    }
+
+    async edit(req: Request, res: Response): Promise<void> {
+        try {
+            const input = new InputEdit(await req.json());
+            const result = await this.todoUseCase.edit(input);
+
+            res.status(200).json(new CommonResponse().ok(result));
+        } catch (err) {
+            res.status(500).json(new CommonResponse().error(err));
+        }
+    }
+
+    async remove(req: Request, res: Response): Promise<void> {
+        try {
+            const input = new InputRemove(await req.json());
+
+            await this.todoUseCase.remove(input);
+
+            res.status(200).json(new CommonResponse().ok());
+        } catch (err) {
+            res.status(500).json(new CommonResponse().error(err));
+        }
+    }
+}

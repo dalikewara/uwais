@@ -1,0 +1,121 @@
+package todo
+
+import (
+	"context"
+	"errors"
+
+	"{{MODULE_NAME}}/domain"
+)
+
+// repositoryPostgresV1 is a basic implementation of the `domain.ToDoRepository` interface that
+// simulates a connection to a Postgres database.
+//
+// Note: This layer simulates Postgres database access for demonstration and testing purposes.
+// It does not connect to a real Postgres database.
+type repositoryPostgresV1 struct {
+	// In a real app, you might want to inject a database connection here.
+	// db interface{}
+}
+
+func (r *repositoryPostgresV1) FindAllCtx(ctx context.Context, queryFilter domain.ToDoQueryFilter) (domain.ToDoList, error) {
+	if queryFilter.ID != nil {
+		for _, row := range mockToDoList.Rows {
+			if row != nil && row.ID == *queryFilter.ID {
+				return domain.NewToDoList(row), nil
+			}
+		}
+
+		return domain.ToDoList{}, nil
+	}
+
+	limit := queryFilter.Limit
+	if limit < 1 {
+		limit = mockToDoList.Len()
+	}
+
+	return domain.NewToDoList(mockToDoList.Rows[:limit]...), nil
+}
+
+func (r *repositoryPostgresV1) FindOneCtx(ctx context.Context, queryFilter domain.ToDoQueryFilter) (*domain.ToDo, error) {
+	rows, err := r.FindAllCtx(ctx, queryFilter)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows.First(), nil
+}
+
+func (r *repositoryPostgresV1) InsertCtx(ctx context.Context, data *domain.ToDo) error {
+	if data == nil || data.Title == "" {
+		return errors.New("cannot insert nil data")
+	}
+
+	lastData := mockToDoList.Last()
+	if lastData != nil {
+		data.ID = lastData.ID + 1
+	}
+
+	data.SetCreatedAtNow()
+
+	mockToDoList.Push(data)
+
+	return nil
+}
+
+func (r *repositoryPostgresV1) UpdateCtx(ctx context.Context, data *domain.ToDo) error {
+	if data == nil || data.ID < 1 || data.Title == "" {
+		return errors.New("cannot update nil data")
+	}
+
+	data.SetUpdatedAtNow()
+
+	for i, row := range mockToDoList.Rows {
+		if row != nil && row.ID == data.ID {
+			mockToDoList.Rows[i] = data
+			break
+		}
+	}
+
+	return nil
+}
+
+func (r *repositoryPostgresV1) DeleteCtx(ctx context.Context, data *domain.ToDo) error {
+	if data == nil || data.ID < 1 {
+		return errors.New("cannot delete nil data")
+	}
+
+	filtered := domain.ToDoList{}
+
+	for _, row := range mockToDoList.Rows {
+		if row != nil && row.ID != data.ID {
+			filtered.Push(row)
+		}
+	}
+
+	mockToDoList = filtered
+
+	return nil
+}
+
+// NewRepositoryPostgresV1 creates a new instance of the `repositoryPostgresV1` struct
+// that implements `domain.ToDoRepository` interface.
+func NewRepositoryPostgresV1() domain.ToDoRepository {
+	return &repositoryPostgresV1{}
+}
+
+// ------------------------------------------------------------------
+// DUMMY
+// ------------------------------------------------------------------
+//
+// Note: This is a global variable holding fake to-do list data.
+// It's used to simulate a database for testing
+//
+// ------------------------------------------------------------------
+
+var mockToDoList = domain.NewToDoList(
+	domain.NewToDo("Task 1").WithID(1),
+	domain.NewToDo("Task 2").WithID(2),
+	domain.NewToDo("Task 3").WithID(3),
+	domain.NewToDo("Task 4").WithID(4),
+	domain.NewToDo("Task 5").WithID(5),
+)

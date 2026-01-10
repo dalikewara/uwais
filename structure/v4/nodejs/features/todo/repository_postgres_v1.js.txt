@@ -1,0 +1,138 @@
+const { Repository, ToDo, ToDoList, QueryFilter } = require('../../domain/todo');
+
+/**
+ * RepositoryPostgresV1 is a basic implementation of the `Repository` blueprint that
+ * simulates a connection to a Postgres database.
+ *
+ * Note: This layer simulates Postgres database access for demonstration and testing purposes.
+ * It does not connect to a real Postgres database.
+ *
+ * @class
+ * @extends {Repository}
+ * @implements {Repository}
+ */
+class RepositoryPostgresV1 extends Repository  {
+    // In a real app, you might want to inject a database connection here.
+    // db = null;
+
+    constructor() {
+        super();
+    }
+
+    /**
+     * @param {QueryFilter} queryFilter
+     *
+     * @returns {Promise<ToDoList>}
+     * @throws {Error}
+     */
+    async findAll(queryFilter) {
+        if (queryFilter.id) {
+            for (let i = 0; i < mockToDoList.len(); i++) {
+                if (mockToDoList.rows[i].id === queryFilter.id) {
+                    return new ToDoList([
+                        mockToDoList.rows[i],
+                    ]);
+                }
+            }
+
+            return new ToDoList();
+        }
+
+        let limit = queryFilter.limit;
+
+        if (limit < 1) {
+            limit = mockToDoList.len();
+        }
+
+        return new ToDoList(mockToDoList.rows.slice(0, limit));
+    }
+
+    /**
+     * @param {QueryFilter} queryFilter
+     *
+     * @returns {Promise<ToDo | null>}
+     * @throws {Error}
+     */
+    async findOne(queryFilter) {
+        let rows = await this.findAll(queryFilter);
+
+        return rows.first();
+    }
+
+    /**
+     * @param {ToDo} data
+     *
+     * @returns {Promise<void>}
+     * @throws {Error}
+     */
+    async insert(data) {
+        if (data.title === '') {
+            throw new Error('Cannot insert empty data');
+        }
+
+        let lastData = mockToDoList.last();
+        if (lastData) {
+            data.id = lastData.id + 1;
+        }
+
+        data.setCreatedAtNow();
+
+        mockToDoList.push(data);
+    }
+
+    /**
+     * @param {ToDo} data
+     *
+     * @returns {Promise<void>}
+     * @throws {Error}
+     */
+    async update(data) {
+        if (data.id < 1 || data.title === '') {
+            throw new Error('Cannot update empty data');
+        }
+
+        data.setUpdatedAtNow();
+
+        for (let i = 0; i < mockToDoList.len(); i++) {
+            if (mockToDoList.rows[i].id === data.id) {
+                mockToDoList.rows[i] = data;
+                break;
+            }
+        }
+    }
+
+    /**
+     * @param {ToDo} data
+     *
+     * @returns {Promise<void>}
+     * @throws {Error}
+     */
+    async delete(data) {
+        if (data.id < 1) {
+            throw new Error('Cannot delete empty data');
+        }
+
+        mockToDoList.rows.filter(row => row.id !== data.id);
+    }
+}
+
+module.exports = {
+    RepositoryPostgresV1,
+};
+
+// ------------------------------------------------------------------
+// DUMMY
+// ------------------------------------------------------------------
+//
+// Note: This is a global variable holding fake to-do list data.
+// It's used to simulate a database for testing
+//
+// ------------------------------------------------------------------
+
+let mockToDoList = new ToDoList([
+    new ToDo('Task 1').withID(1),
+    new ToDo('Task 2').withID(2),
+    new ToDo('Task 3').withID(3),
+    new ToDo('Task 4').withID(4),
+    new ToDo('Task 5').withID(5),
+]);

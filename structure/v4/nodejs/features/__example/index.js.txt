@@ -1,0 +1,9 @@
+const { HttpServiceV1 } = require('./httpService_v1');
+const { RepositoryV1 } = require('./repository_v1');
+const { UseCaseV1 } = require('./usecase_v1');
+
+module.exports = {
+    HttpServiceV1,
+    RepositoryV1,
+    UseCaseV1,
+};

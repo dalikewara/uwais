@@ -1,0 +1,18 @@
+package {{TEMPLATE_NAME}}
+
+import "{{MODULE_NAME}}/domain"
+
+// repositoryV1 is a basic implementation of the `domain.{{TEMPLATE_NAME_PASCAL_CASE}}Repository` interface that
+// simulates a connection to a database.
+type repositoryV1 struct {
+	// In a real app, you might want to inject a database connection here.
+	// db interface{}
+}
+
+// ...
+
+// NewRepositoryV1 creates a new instance of the `repositoryV1` struct
+// that implements `domain.{{TEMPLATE_NAME_PASCAL_CASE}}Repository` interface.
+func NewRepositoryV1() domain.{{TEMPLATE_NAME_PASCAL_CASE}}Repository {
+	return &repositoryV1{}
+}

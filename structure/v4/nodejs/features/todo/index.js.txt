@@ -1,0 +1,9 @@
+const { HttpServiceHyperExpressV1 } = require('./httpService_hyperExpress_v1');
+const { RepositoryPostgresV1 } = require('./repository_postgres_v1');
+const { UseCaseV1 } = require('./usecase_v1');
+
+module.exports = {
+    HttpServiceHyperExpressV1,
+    RepositoryPostgresV1,
+    UseCaseV1,
+};

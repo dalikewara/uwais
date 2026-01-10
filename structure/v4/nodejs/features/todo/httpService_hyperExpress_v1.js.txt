@@ -1,0 +1,112 @@
+const { Request, Response } = require('hyper-express');
+
+const { Response: CommonResponse } = require('../../common/response');
+const { UseCase, InputGetAll, InputAdd, InputEdit, InputRemove } = require('../../domain/todo');
+
+/**
+ * HttpServiceHyperExpressV1 is an HTTP service handler using HyperExpress.
+ * It's responsible for routing and calling the right use case methods.
+ * Avoid putting any business logic or data access code in this layer.
+ *
+ * @class
+ */
+class HttpServiceHyperExpressV1 {
+    /**
+     * @type {UseCase}
+     */
+    todoUseCase;
+
+    /**
+     * @param {UseCase} todoUseCase
+     *
+     * @throws {TypeError}
+     */
+    constructor(todoUseCase) {
+        this.todoUseCase = todoUseCase;
+
+        this.validate();
+    }
+
+    /**
+     * @returns {void}
+     * @throws {TypeError}
+     */
+    validate() {
+        if (!(this.todoUseCase instanceof UseCase)) {
+            throw new TypeError('`todoUseCase` must be an instance of ToDo UseCase blueprint');
+        }
+    }
+
+    /**
+     * @param {Request} req
+     * @param {Response} res
+     *
+     * @returns {Promise<void>}
+     */
+    async getAll(req, res) {
+        try {
+            const input = new InputGetAll(req.query);
+            const result = await this.todoUseCase.getAll(input);
+
+            res.status(200).json(new CommonResponse().ok(result.rows));
+        } catch (err) {
+            res.status(500).json(new CommonResponse().error(err));
+        }
+    }
+
+    /**
+     * @param {Request} req
+     * @param {Response} res
+     *
+     * @returns {Promise<void>}
+     */
+    async add(req, res) {
+        try {
+            const input = new InputAdd(await req.json());
+            const result = await this.todoUseCase.add(input);
+
+            res.status(200).json(new CommonResponse().ok(result));
+        } catch (err) {
+            res.status(500).json(new CommonResponse().error(err));
+        }
+    }
+
+    /**
+     * @param {Request} req
+     * @param {Response} res
+     *
+     * @returns {Promise<void>}
+     */
+    async edit(req, res) {
+        try {
+            const input = new InputEdit(await req.json());
+            const result = await this.todoUseCase.edit(input);
+
+            res.status(200).json(new CommonResponse().ok(result));
+        } catch (err) {
+            res.status(500).json(new CommonResponse().error(err));
+        }
+    }
+
+    /**
+     * @param {Request} req
+     * @param {Response} res
+     *
+     * @returns {Promise<void>}
+     */
+    async remove(req, res) {
+        try {
+            const input = new InputRemove(await req.json());
+
+            await this.todoUseCase.remove(input);
+
+            res.status(200).json(new CommonResponse().ok());
+        } catch (err) {
+            res.status(500).json(new CommonResponse().error(err));
+        }
+    }
+}
+
+module.exports = {
+    HttpServiceHyperExpressV1
+};

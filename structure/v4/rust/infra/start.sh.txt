@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir tmp || true
+(echo "running './target/release/main'" && ./target/release/main) || (echo "'./target/release/main' binary is not available" && echo "running 'cargo run'" && cargo run)

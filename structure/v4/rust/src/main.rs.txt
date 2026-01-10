@@ -1,0 +1,54 @@
+use actix_web::{App, HttpServer, web};
+use std::sync::Arc;
+
+mod common;
+mod domain;
+mod features;
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    // Application initialization
+
+    let port = 8080;
+
+    // Repositories setup
+
+    let todo_repository_postgres_v1: Arc<dyn domain::todo::Repository> =
+        Arc::new(features::todo::repository_postgres_v1::Impl::new());
+
+    // Use cases setup
+
+    let todo_usecase_v1: Arc<dyn domain::todo::UseCase> = Arc::new(
+        features::todo::usecase_v1::Impl::new(todo_repository_postgres_v1.clone()),
+    );
+
+    // HTTP service setup, router and listener using Actix-Web
+
+    let todo_usecase_v1_state = web::Data::new(todo_usecase_v1.clone());
+
+    println!("{}: {}", "Actix-Web runs on port", port);
+
+    HttpServer::new(move || {
+        App::new()
+            .app_data(todo_usecase_v1_state.clone())
+            .route(
+                "/todos",
+                web::get().to(features::todo::http_service_actixweb_v1::get_all),
+            )
+            .route(
+                "/todo/add",
+                web::post().to(features::todo::http_service_actixweb_v1::add),
+            )
+            .route(
+                "/todo/edit",
+                web::post().to(features::todo::http_service_actixweb_v1::edit),
+            )
+            .route(
+                "/todo/remove",
+                web::post().to(features::todo::http_service_actixweb_v1::remove),
+            )
+    })
+    .bind(("0.0.0.0", port))?
+    .run()
+    .await
+}

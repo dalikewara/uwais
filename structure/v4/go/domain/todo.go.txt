@@ -1,0 +1,251 @@
+package domain
+
+import (
+	"context"
+	"time"
+)
+
+// ------------------------------------------------------------------
+// Contract
+// ------------------------------------------------------------------
+//
+// This is the "Contract" or agreement for the domain model.
+// It's called a contract because it only defines what needs to be done,
+// without worrying about how to do it.
+// Think of it as a blueprint, not the actual implementation.
+//
+// ------------------------------------------------------------------
+
+// ToDoRepository is the blueprint for the data storage layer.
+// It acts as a bridge between the business logic and the database or other data sources.
+// This allows the data sources to be changed without altering the business logic.
+type ToDoRepository interface {
+	FindAllCtx(ctx context.Context, queryFilter ToDoQueryFilter) (ToDoList, error)
+	FindOneCtx(ctx context.Context, queryFilter ToDoQueryFilter) (*ToDo, error)
+	InsertCtx(ctx context.Context, data *ToDo) error
+	UpdateCtx(ctx context.Context, data *ToDo) error
+	DeleteCtx(ctx context.Context, data *ToDo) error
+}
+
+// ToDoUseCase is the blueprint for the business logic.
+// All the business rules for todo operations are here, such as how to add, edit, or retrieve data.
+// It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
+type ToDoUseCase interface {
+	GetAllCtx(ctx context.Context, input ToDoInputGetAll) (ToDoDTO1List, error)
+	AddCtx(ctx context.Context, input ToDoInputAdd) (ToDoDTO1, error)
+	EditCtx(ctx context.Context, input ToDoInputEdit) (ToDoDTO1, error)
+	RemoveCtx(ctx context.Context, input ToDoInputRemove) error
+}
+
+// ------------------------------------------------------------------
+// Model
+// ------------------------------------------------------------------
+//
+// This model is the representation of todo data.
+// It stores data and has methods (functions) to process the data itself.
+//
+// ------------------------------------------------------------------
+
+// ToDo is the main data structure for storing task data.
+// The `ID` is for identification, the `Title` is for the title,
+// and `CreatedAt` and `UpdatedAt` track when it was created and updated.
+type ToDo struct {
+	ID        int64     `json:"id"`
+	Title     string    `json:"json"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (t *ToDo) SetCreatedAtNow() {
+	t.CreatedAt = time.Now().UTC()
+}
+
+func (t *ToDo) SetUpdatedAtNow() {
+	t.UpdatedAt = time.Now().UTC()
+}
+
+func (t *ToDo) GetFormattedCreatedAt() string {
+	return t.CreatedAt.Format(time.RFC3339)
+}
+
+func (t *ToDo) GetFormattedUpdatedAt() string {
+	return t.UpdatedAt.Format(time.RFC3339)
+}
+
+func (t *ToDo) WithID(id int64) *ToDo {
+	t.ID = id
+
+	return t
+}
+
+func (t *ToDo) ToDTO1() ToDoDTO1 {
+	return ToDoDTO1{
+		ID:        t.ID,
+		Title:     t.Title,
+		CreatedAt: t.GetFormattedCreatedAt(),
+		UpdatedAt: t.GetFormattedUpdatedAt(),
+	}
+}
+
+// NewToDo creates a new `ToDo`.
+func NewToDo(title string) *ToDo {
+	now := time.Now().UTC()
+
+	return &ToDo{
+		Title:     title,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+}
+
+// ToDoList is a collection of `ToDo` items.
+type ToDoList struct {
+	Rows []*ToDo
+
+	// By using this style, you can add additional properties that might be useful
+	// ...
+}
+
+func (t *ToDoList) Push(row *ToDo) {
+	t.Rows = append(t.Rows, row)
+}
+
+func (t *ToDoList) First() *ToDo {
+	if t.Len() < 1 {
+		return nil
+	}
+
+	return t.Rows[0]
+}
+
+func (t *ToDoList) Last() *ToDo {
+	if t.Len() < 1 {
+		return nil
+	}
+
+	return t.Rows[t.Len()-1]
+}
+
+func (t *ToDoList) Len() int {
+	if t.Rows == nil {
+		return 0
+	}
+
+	return len(t.Rows)
+}
+
+func (t *ToDoList) ToDTO1List() ToDoDTO1List {
+	var result ToDoDTO1List
+
+	for _, row := range t.Rows {
+		if row == nil {
+			continue
+		}
+
+		result.Push(row.ToDTO1())
+	}
+
+	return result
+}
+
+// NewToDoList creates a new collection of `ToDo` items.
+func NewToDoList(rows ...*ToDo) ToDoList {
+	var result ToDoList
+
+	for _, row := range rows {
+		if row == nil {
+			continue
+		}
+
+		result.Push(row)
+	}
+
+	return result
+}
+
+// ------------------------------------------------------------------
+// DTO (Data Transfer Object)
+// ------------------------------------------------------------------
+//
+// A DTO is just for transferring data between layers or outside the system.
+// It has no business logic at all; it's just a data "wrapper."
+//
+// ------------------------------------------------------------------
+
+// ToDoDTO1 is a data transfer version of `ToDo`,
+// containing only the data that will be sent out (e.g., to the frontend).
+// Note that `CreatedAt` and `UpdatedAt` are now strings, not `time.Time` anymore.
+type ToDoDTO1 struct {
+	ID        int64  `json:"id"`
+	Title     string `json:"title"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+// ToDoDTO1List is a collection of `ToDoDTO1` items.
+type ToDoDTO1List struct {
+	Rows []ToDoDTO1
+
+	// By using this style, you can add additional properties that might be useful
+	// ...
+}
+
+func (t *ToDoDTO1List) Push(row ToDoDTO1) {
+	t.Rows = append(t.Rows, row)
+}
+
+// ------------------------------------------------------------------
+// Filter
+// ------------------------------------------------------------------
+//
+// This is a data structure for filtering or searching data.
+// For example, to search for a todo with a specific `ID`.
+//
+// ------------------------------------------------------------------
+
+// ToDoQueryFilter holds the parameters for data searches.
+type ToDoQueryFilter struct {
+	ID    *int64
+	Limit int
+}
+
+func (t ToDoQueryFilter) WithID(id int64) ToDoQueryFilter {
+	t.ID = &id
+
+	return t
+}
+
+func (t ToDoQueryFilter) WithLimit(limit int) ToDoQueryFilter {
+	t.Limit = limit
+
+	return t
+}
+
+// ------------------------------------------------------------------
+// Input
+// ------------------------------------------------------------------
+//
+// Input is data that enters the system, usually from an HTTP request.
+//
+// ------------------------------------------------------------------
+
+// ToDoInputGetAll is the input data for retrieving todos.
+type ToDoInputGetAll struct {
+	Limit int `query:"limit"`
+}
+
+// ToDoInputAdd is the input data for adding a new todo.
+type ToDoInputAdd struct {
+	Title string `json:"title"`
+}
+
+// ToDoInputEdit is the input data for updating an existing todo.
+type ToDoInputEdit struct {
+	ID    int64  `json:"id"`
+	Title string `json:"title"`
+}
+
+// ToDoInputRemove is the input data for deleting a todo.
+type ToDoInputRemove struct {
+	ID int64 `json:"id"`
+}

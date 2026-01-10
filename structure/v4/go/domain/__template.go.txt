@@ -1,0 +1,154 @@
+package domain
+
+// ------------------------------------------------------------------
+// Contract
+// ------------------------------------------------------------------
+//
+// This is the "Contract" or agreement for the domain model.
+// It's called a contract because it only defines what needs to be done,
+// without worrying about how to do it.
+// Think of it as a blueprint, not the actual implementation.
+//
+// ------------------------------------------------------------------
+
+// {{TEMPLATE_NAME_PASCAL_CASE}}Repository is the blueprint for the data storage layer.
+// It acts as a bridge between the business logic and the database or other data sources.
+// This allows the data sources to be changed without altering the business logic.
+type {{TEMPLATE_NAME_PASCAL_CASE}}Repository interface {}
+
+// {{TEMPLATE_NAME_PASCAL_CASE}}UseCase is the blueprint for the business logic.
+// All the business rules for {{TEMPLATE_NAME_PASCAL_CASE}} operations are here, such as how to add, edit, or retrieve data.
+// It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
+type {{TEMPLATE_NAME_PASCAL_CASE}}UseCase interface {}
+
+// ------------------------------------------------------------------
+// Model
+// ------------------------------------------------------------------
+//
+// This model is the representation of {{TEMPLATE_NAME_PASCAL_CASE}} data.
+//
+// ------------------------------------------------------------------
+
+// {{TEMPLATE_NAME_PASCAL_CASE}} is the main data structure for {{TEMPLATE_NAME_PASCAL_CASE}} data.
+type {{TEMPLATE_NAME_PASCAL_CASE}} struct {}
+
+func (t *{{TEMPLATE_NAME_PASCAL_CASE}}) ToDTO1() {{TEMPLATE_NAME_PASCAL_CASE}}DTO1 {
+	return {{TEMPLATE_NAME_PASCAL_CASE}}DTO1{}
+}
+
+// New{{TEMPLATE_NAME_PASCAL_CASE}} creates a new `{{TEMPLATE_NAME_PASCAL_CASE}}`.
+func New{{TEMPLATE_NAME_PASCAL_CASE}}() *{{TEMPLATE_NAME_PASCAL_CASE}} {
+	return &{{TEMPLATE_NAME_PASCAL_CASE}}{}
+}
+
+// {{TEMPLATE_NAME_PASCAL_CASE}}List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
+type {{TEMPLATE_NAME_PASCAL_CASE}}List struct {
+	Rows []*{{TEMPLATE_NAME_PASCAL_CASE}}
+
+	// By using this style, you can add additional properties that might be useful
+	// ...
+}
+
+func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) Push(row *{{TEMPLATE_NAME_PASCAL_CASE}}) {
+	t.Rows = append(t.Rows, row)
+}
+
+func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) First() *{{TEMPLATE_NAME_PASCAL_CASE}} {
+	if t.Len() < 1 {
+		return nil
+	}
+
+	return t.Rows[0]
+}
+
+func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) Last() *{{TEMPLATE_NAME_PASCAL_CASE}} {
+	if t.Len() < 1 {
+		return nil
+	}
+
+	return t.Rows[t.Len()-1]
+}
+
+func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) Len() int {
+	if t.Rows == nil {
+		return 0
+	}
+
+	return len(t.Rows)
+}
+
+func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) ToDTO1List() {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List {
+	var result {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List
+
+	for _, row := range t.Rows {
+		if row == nil {
+			continue
+		}
+
+		result.Push(row.ToDTO1())
+	}
+
+	return result
+}
+
+// New{{TEMPLATE_NAME_PASCAL_CASE}}List creates a new collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
+func New{{TEMPLATE_NAME_PASCAL_CASE}}List(rows ...*{{TEMPLATE_NAME_PASCAL_CASE}}) {{TEMPLATE_NAME_PASCAL_CASE}}List {
+	var result {{TEMPLATE_NAME_PASCAL_CASE}}List
+
+	for _, row := range rows {
+		if row == nil {
+			continue
+		}
+
+		result.Push(row)
+	}
+
+	return result
+}
+
+// ------------------------------------------------------------------
+// DTO (Data Transfer Object)
+// ------------------------------------------------------------------
+//
+// A DTO is just for transferring data between layers or outside the system.
+// It has no business logic at all; it's just a data "wrapper."
+//
+// ------------------------------------------------------------------
+
+// {{TEMPLATE_NAME_PASCAL_CASE}}DTO1 is a data transfer version of `{{TEMPLATE_NAME_PASCAL_CASE}}`,
+// containing only the data that will be sent out (e.g., to the frontend).
+type {{TEMPLATE_NAME_PASCAL_CASE}}DTO1 struct {}
+
+// {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}DTO1` items.
+type {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List struct {
+	Rows []{{TEMPLATE_NAME_PASCAL_CASE}}DTO1
+
+	// By using this style, you can add additional properties that might be useful
+	// ...
+}
+
+func (t *{{TEMPLATE_NAME_PASCAL_CASE}}DTO1List) Push(row {{TEMPLATE_NAME_PASCAL_CASE}}DTO1) {
+	t.Rows = append(t.Rows, row)
+}
+
+// ------------------------------------------------------------------
+// Filter
+// ------------------------------------------------------------------
+//
+// This is a data structure for filtering or searching data.
+//
+// ------------------------------------------------------------------
+
+// {{TEMPLATE_NAME_PASCAL_CASE}}QueryFilter holds the parameters for data searches.
+type {{TEMPLATE_NAME_PASCAL_CASE}}QueryFilter struct {}
+
+// ------------------------------------------------------------------
+// Input
+// ------------------------------------------------------------------
+//
+// Input is data that enters the system, usually from an HTTP request.
+//
+// ------------------------------------------------------------------
+
+// {{TEMPLATE_NAME_PASCAL_CASE}}InputGetAll is the input data for retrieving {{TEMPLATE_NAME_PASCAL_CASE}} list.
+type {{TEMPLATE_NAME_PASCAL_CASE}}InputGetAll struct {}

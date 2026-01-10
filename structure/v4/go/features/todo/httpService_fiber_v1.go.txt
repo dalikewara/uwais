@@ -1,0 +1,89 @@
+package todo
+
+import (
+	"github.com/gofiber/fiber/v2"
+
+    "{{MODULE_NAME}}/common"
+	"{{MODULE_NAME}}/domain"
+)
+
+// HttpServiceFiberV1 is an HTTP service handler using Fiber.
+// It's responsible for handling and calling the right use case methods.
+// Avoid putting any business logic or data access code in this layer.
+type HttpServiceFiberV1 struct {
+	todoUseCase domain.ToDoUseCase
+}
+
+func (h *HttpServiceFiberV1) GetAll(f *fiber.Ctx) error {
+	ctx := f.Context()
+
+	var input domain.ToDoInputGetAll
+
+	if err := f.QueryParser(&input); err != nil {
+		return f.Status(fiber.StatusBadRequest).JSON(common.NewResponseError(err))
+	}
+
+	result, err := h.todoUseCase.GetAllCtx(ctx, input)
+	if err != nil {
+		return f.Status(fiber.StatusInternalServerError).JSON(common.NewResponseError(err))
+	}
+
+	return f.Status(fiber.StatusOK).JSON(common.NewResponseOK(result.Rows))
+}
+
+func (h *HttpServiceFiberV1) Add(f *fiber.Ctx) error {
+	ctx := f.Context()
+
+	var input domain.ToDoInputAdd
+
+	if err := f.BodyParser(&input); err != nil {
+		return f.Status(fiber.StatusBadRequest).JSON(common.NewResponseError(err))
+	}
+
+	result, err := h.todoUseCase.AddCtx(ctx, input)
+	if err != nil {
+		return f.Status(fiber.StatusInternalServerError).JSON(common.NewResponseError(err))
+	}
+
+	return f.Status(fiber.StatusOK).JSON(common.NewResponseOK(result))
+}
+
+func (h *HttpServiceFiberV1) Edit(f *fiber.Ctx) error {
+	ctx := f.Context()
+
+	var input domain.ToDoInputEdit
+
+	if err := f.BodyParser(&input); err != nil {
+		return f.Status(fiber.StatusBadRequest).JSON(common.NewResponseError(err))
+	}
+
+	result, err := h.todoUseCase.EditCtx(ctx, input)
+	if err != nil {
+		return f.Status(fiber.StatusInternalServerError).JSON(common.NewResponseError(err))
+	}
+
+	return f.Status(fiber.StatusOK).JSON(common.NewResponseOK(result))
+}
+
+func (h *HttpServiceFiberV1) Remove(f *fiber.Ctx) error {
+	ctx := f.Context()
+
+	var input domain.ToDoInputRemove
+
+	if err := f.BodyParser(&input); err != nil {
+		return f.Status(fiber.StatusBadRequest).JSON(common.NewResponseError(err))
+	}
+
+	if err := h.todoUseCase.RemoveCtx(ctx, input); err != nil {
+		return f.Status(fiber.StatusInternalServerError).JSON(common.NewResponseError(err))
+	}
+
+	return f.Status(fiber.StatusOK).JSON(nil)
+}
+
+// NewHttpServiceFiberV1 creates a new instance of the `HttpServiceFiberV1` struct.
+func NewHttpServiceFiberV1(todoUseCase domain.ToDoUseCase) *HttpServiceFiberV1 {
+	return &HttpServiceFiberV1{
+		todoUseCase: todoUseCase,
+	}
+}

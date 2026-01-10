@@ -1,0 +1,6 @@
+package common
+
+// {{TEMPLATE_NAME_PASCAL_CASE}} implements the core logic for this functionality.
+func {{TEMPLATE_NAME_PASCAL_CASE}}() {
+	return
+}

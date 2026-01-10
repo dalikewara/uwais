@@ -1,0 +1,14 @@
+from domain.{{TEMPLATE_NAME}} import Repository
+
+
+class RepositoryV1(Repository):
+    """
+    RepositoryV1 is a basic implementation of the `Repository` blueprint that
+    simulates a connection to a database.
+    """
+
+    # In a real app, you might want to inject a database connection here.
+    # db: None
+
+    def __init__(self) -> None:
+        return

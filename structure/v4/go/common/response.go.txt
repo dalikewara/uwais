@@ -1,0 +1,26 @@
+package common
+
+// Response is a standard response format for all API responses.
+type Response struct {
+	Status  bool        `json:"status"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+
+// NewResponseOK creates a new success `Response`.
+func NewResponseOK(data interface{}) Response {
+	return Response{
+		Status:  true,
+		Message: "ok",
+		Data:    data,
+	}
+}
+
+// NewResponseError creates a new error `Response`.
+func NewResponseError(err error) Response {
+	return Response{
+		Status:  false,
+		Message: err.Error(),
+		Data:    nil,
+	}
+}

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+mkdir tmp || true
+npm install
+./node_modules/.bin/tsc || tsc
+./node_modules/.bin/tsc-alias || tsc-alias

@@ -1,0 +1,39 @@
+package main
+
+import (
+	"github.com/gofiber/fiber/v2"
+    "log"
+
+	"{{MODULE_NAME}}/features/todo"
+)
+
+func main() {
+	// Application initialization
+
+	port := "8080"
+
+	// Repositories setup
+
+	todoRepositoryPostgresV1 := todo.NewRepositoryPostgresV1()
+
+	// Use cases setup
+
+	todoUseCaseV1 := todo.NewUseCaseV1(todoRepositoryPostgresV1)
+
+	// HTTP service setup, router and listener using Fiber
+
+	fiberApp := fiber.New()
+
+	todoHttpServiceFiberV1 := todo.NewHttpServiceFiberV1(todoUseCaseV1)
+
+	fiberApp.Get("/todos", todoHttpServiceFiberV1.GetAll)
+	fiberApp.Post("/todo/add", todoHttpServiceFiberV1.Add)
+	fiberApp.Post("/todo/edit", todoHttpServiceFiberV1.Edit)
+	fiberApp.Post("/todo/remove", todoHttpServiceFiberV1.Remove)
+
+	log.Println("Fiber runs on port: ", port)
+
+	if err := fiberApp.Listen("0.0.0.0:" + port); err != nil {
+		panic(err)
+	}
+}

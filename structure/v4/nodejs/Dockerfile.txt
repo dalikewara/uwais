@@ -1,0 +1,24 @@
+FROM node:22.14.0
+
+# Install system dependecies
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends git
+RUN apt-get install -y --no-install-recommends tzdata
+RUN apt-get install -y --no-install-recommends build-essential
+RUN apt-get install -y --no-install-recommends make
+RUN apt-get install -y --no-install-recommends dos2unix
+RUN rm -rf /var/lib/apt/lists/*
+ENV TZ Asia/Jakarta
+
+# Setup the app
+WORKDIR /{{PROJECT_NAME}}-{{LANGUAGE_NAME}}
+COPY . .
+RUN find ./infra -type f -name "*.sh" -exec dos2unix {} \;
+RUN chmod +x ./infra/build.sh
+RUN chmod +x ./infra/start.sh
+
+# Build the app
+RUN ./infra/build.sh
+
+# Run apps
+ENTRYPOINT ["/{{PROJECT_NAME}}-{{LANGUAGE_NAME}}/infra/start.sh"]

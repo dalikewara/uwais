@@ -2,8 +2,6 @@
 .env*
 *.env
 !.env.example
-!.env.txt
-!.env.example.txt
 
 # OS X
 .DS_Store*
@@ -35,13 +33,6 @@ Desktop.ini
 
 # Node artifact files
 node_modules/
-dist/
-
-# Compiled Java class files
-*.class
-
-# Compiled Python bytecode
-*.py[cod]
 
 # Log files
 *.log
@@ -85,7 +76,3 @@ temp
 .tmp
 tmp
 scripts
-venv
-venv/*
-*pycache*
-.pypirc

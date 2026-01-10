@@ -1,0 +1,19 @@
+use async_trait::async_trait;
+
+use crate::domain::{{TEMPLATE_NAME}} as domain_{{TEMPLATE_NAME}};
+
+/// Impl is a basic implementation of the `domain::{{TEMPLATE_NAME}}::Repository` trait that
+/// simulates a connection to a database.
+pub struct Impl {
+    // In a real app, you might want to inject a database connection here.
+    // db: Option<T>,
+}
+
+impl Impl {
+    pub fn new() -> Self {
+        Self { }
+    }
+}
+
+#[async_trait]
+impl domain_{{TEMPLATE_NAME}}::Repository for Impl {}

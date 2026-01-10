@@ -1,0 +1,248 @@
+use async_trait::async_trait;
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+
+// ------------------------------------------------------------------
+// Contract
+// ------------------------------------------------------------------
+//
+// This is the "Contract" or agreement for the domain model.
+// It's called a contract because it only defines what needs to be done,
+// without worrying about how to do it.
+// Think of it as a blueprint, not the actual implementation.
+//
+// ------------------------------------------------------------------
+
+/// Repository is the blueprint for the data storage layer.
+/// It acts as a bridge between the business logic and the database or other data sources.
+/// This allows the data sources to be changed without altering the business logic.
+#[async_trait]
+pub trait Repository: Send + Sync {
+    async fn find_all(&self, query_filter: QueryFilter) -> Result<ToDoList, String>;
+    async fn find_one(&self, query_filter: QueryFilter) -> Result<Option<ToDo>, String>;
+    async fn insert(&self, data: &mut ToDo) -> Result<(), String>;
+    async fn update(&self, data: &mut ToDo) -> Result<(), String>;
+    async fn delete(&self, data: &ToDo) -> Result<(), String>;
+}
+
+/// UseCase is the blueprint for the business logic.
+/// All the business rules for todo operations are here, such as how to add, edit, or retrieve data.
+/// It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
+#[async_trait]
+pub trait UseCase: Send + Sync {
+    async fn get_all(&self, input: InputGetAll) -> Result<DTO1List, String>;
+    async fn add(&self, input: InputAdd) -> Result<DTO1, String>;
+    async fn edit(&self, input: InputEdit) -> Result<DTO1, String>;
+    async fn remove(&self, input: InputRemove) -> Result<(), String>;
+}
+
+// ------------------------------------------------------------------
+// Model
+// ------------------------------------------------------------------
+//
+// This model is the representation of todo data.
+// It stores data and has methods (functions) to process the data itself.
+//
+// ------------------------------------------------------------------
+
+/// ToDo is the main data structure for storing task data.
+/// The `id` is for identification, the `title` is for the title,
+/// and `created_at` and `updated_at` track when it was created and updated.
+#[derive(Default, Clone)]
+pub struct ToDo {
+    pub id: i64,
+    pub title: String,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+impl ToDo {
+    pub fn new(title: String) -> Self {
+        let now = Utc::now();
+
+        Self {
+            title,
+            created_at: now,
+            updated_at: now,
+            ..Self::default()
+        }
+    }
+
+    pub fn set_created_at_now(&mut self) {
+        self.created_at = Utc::now();
+    }
+
+    pub fn set_updated_at_now(&mut self) {
+        self.updated_at = Utc::now();
+    }
+
+    pub fn get_formatted_created_at(&self) -> String {
+        self.created_at.to_rfc3339()
+    }
+
+    pub fn get_formatted_updated_at(&self) -> String {
+        self.updated_at.to_rfc3339()
+    }
+
+    pub fn with_id(mut self, id: i64) -> Self {
+        self.id = id;
+
+        self
+    }
+
+    pub fn to_dto1(self) -> DTO1 {
+        DTO1 {
+            id: self.id,
+            title: self.title.clone(),
+            created_at: self.get_formatted_created_at(),
+            updated_at: self.get_formatted_updated_at(),
+        }
+    }
+}
+
+/// ToDoList is a collection of `ToDo` items.
+#[derive(Default)]
+pub struct ToDoList {
+    pub rows: Vec<ToDo>,
+    // By using this style, you can add additional properties that might be useful
+    // ...
+}
+
+impl ToDoList {
+    pub fn new(rows: Vec<ToDo>) -> Self {
+        let mut result = Self::default();
+
+        for row in rows {
+            result.push(row);
+        }
+
+        result
+    }
+
+    pub fn push(&mut self, row: ToDo) {
+        self.rows.push(row);
+    }
+
+    pub fn first(&self) -> Option<&ToDo> {
+        self.rows.first()
+    }
+
+    pub fn last(&self) -> Option<&ToDo> {
+        self.rows.last()
+    }
+
+    pub fn len(&self) -> usize {
+        self.rows.len()
+    }
+
+    pub fn to_dto1_list(self) -> DTO1List {
+        let mut result = DTO1List::default();
+
+        for row in self.rows {
+            result.push(row.to_dto1())
+        }
+
+        result
+    }
+}
+
+// ------------------------------------------------------------------
+// DTO (Data Transfer Object)
+// ------------------------------------------------------------------
+//
+// A DTO is just for transferring data between layers or outside the system.
+// It has no business logic at all; it's just a data "wrapper."
+//
+// ------------------------------------------------------------------
+
+/// DTO1 is a data transfer version of `ToDo`,
+/// containing only the data that will be sent out (e.g., to the frontend).
+/// Note that `created_at` and `updated_at` are now strings, not `DateTime` anymore.
+#[derive(Default, Serialize)]
+pub struct DTO1 {
+    pub id: i64,
+    pub title: String,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+/// DTO1List is a collection of `DTO1` items.
+#[derive(Default, Serialize)]
+pub struct DTO1List {
+    pub rows: Vec<DTO1>,
+    // By using this style, you can add additional properties that might be useful
+    // ...
+}
+
+impl DTO1List {
+    pub fn push(&mut self, row: DTO1) {
+        self.rows.push(row);
+    }
+}
+
+// ------------------------------------------------------------------
+// Filter
+// ------------------------------------------------------------------
+//
+// This is a data structure for filtering or searching data.
+// For example, to search for a todo with a specific `id`.
+//
+// ------------------------------------------------------------------
+
+/// QueryFilter holds the parameters for data searches.
+#[derive(Default)]
+pub struct QueryFilter {
+    pub id: Option<i64>,
+    pub limit: i32,
+}
+
+impl QueryFilter {
+    pub fn with_id(mut self, id: i64) -> Self {
+        self.id = Some(id);
+
+        self
+    }
+
+    pub fn with_limit(mut self, limit: i32) -> Self {
+        self.limit = limit;
+
+        self
+    }
+}
+
+// ------------------------------------------------------------------
+// Input
+// ------------------------------------------------------------------
+//
+// Input is data that enters the system, usually from an HTTP request.
+//
+// ------------------------------------------------------------------
+
+/// InputGetAll is the input data for retrieving todos.
+#[derive(Default, Deserialize)]
+#[serde(default)]
+pub struct InputGetAll {
+    pub limit: i32,
+}
+
+/// InputAdd is the input data for adding a new todo.
+#[derive(Default, Deserialize)]
+#[serde(default)]
+pub struct InputAdd {
+    pub title: String,
+}
+
+/// InputEdit is the input data for updating an existing todo.
+#[derive(Default, Deserialize)]
+#[serde(default)]
+pub struct InputEdit {
+    pub id: i64,
+    pub title: String,
+}
+
+/// InputRemove is the input data for deleting a todo.
+#[derive(Default, Deserialize)]
+#[serde(default)]
+pub struct InputRemove {
+    pub id: i64,
+}

@@ -1,0 +1,42 @@
+const { UseCase } = require('../../domain/{{TEMPLATE_NAME}}');
+
+/**
+ * HttpServiceV1 is an HTTP service handler.
+ * It's responsible for routing and calling the right use case methods.
+ * Avoid putting any business logic or data access code in this layer.
+ *
+ * @class
+ */
+class HttpServiceV1 {
+    /**
+     * @type {UseCase}
+     */
+    {{TEMPLATE_NAME}}UseCase;
+
+    /**
+     * @param {UseCase} {{TEMPLATE_NAME}}UseCase
+     *
+     * @throws {TypeError}
+     */
+    constructor({{TEMPLATE_NAME}}UseCase) {
+        this.{{TEMPLATE_NAME}}UseCase = {{TEMPLATE_NAME}}UseCase;
+
+        this.validate();
+    }
+
+    /**
+     * @returns {void}
+     * @throws {TypeError}
+     */
+    validate() {
+        if (!(this.{{TEMPLATE_NAME}}UseCase instanceof UseCase)) {
+            throw new TypeError('`{{TEMPLATE_NAME}}UseCase` must be an instance of {{TEMPLATE_NAME_PASCAL_CASE}} UseCase blueprint');
+        }
+    }
+
+    // ...
+}
+
+module.exports = {
+    HttpServiceV1
+};

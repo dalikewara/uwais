@@ -1,0 +1,5 @@
+def {{TEMPLATE_NAME}}():
+    """
+    {{TEMPLATE_NAME}} implements the core logic for this functionality.
+    """
+    return

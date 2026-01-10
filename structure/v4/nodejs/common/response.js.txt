@@ -1,0 +1,56 @@
+/**
+ * Response is a standard response format for all API responses.
+ *
+ * @class
+ */
+class Response {
+    /**
+     * @type {boolean}
+     */
+    status = false;
+
+    /**
+     * @type {string}
+     */
+    message = '';
+
+    /**
+     * @type {any}
+     */
+    data = null;
+
+    /**
+     * @param {any} data
+     *
+     * @returns {Response}
+     */
+    ok(data = null) {
+        this.status = true;
+        this.message = 'ok';
+        this.data = data;
+
+        return this;
+    }
+
+    /**
+     * @param {any} err
+     *
+     * @returns {Response}
+     */
+    error(err = new Error('General error')) {
+        this.status = false;
+        this.data = null;
+
+        if (err instanceof Error) {
+            this.message = err.message;
+        } else {
+            this.message = String(err);
+        }
+
+        return this;
+    }
+}
+
+module.exports = {
+    Response
+}

@@ -1,0 +1,19 @@
+package {{TEMPLATE_NAME}}
+
+import "{{MODULE_NAME}}/domain"
+
+// HttpServiceV1 is an HTTP service handler.
+// It's responsible for handling and calling the right use case methods.
+// Avoid putting any business logic or data access code in this layer.
+type HttpServiceV1 struct {
+	{{TEMPLATE_NAME}}UseCase domain.{{TEMPLATE_NAME_PASCAL_CASE}}UseCase
+}
+
+// ...
+
+// NewHttpServiceV1 creates a new instance of the `HttpServiceV1` struct.
+func NewHttpServiceV1({{TEMPLATE_NAME}}UseCase domain.{{TEMPLATE_NAME_PASCAL_CASE}}UseCase) *HttpServiceV1 {
+	return &HttpServiceV1{
+		{{TEMPLATE_NAME}}UseCase: {{TEMPLATE_NAME}}UseCase,
+	}
+}

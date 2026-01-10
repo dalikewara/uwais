@@ -1,0 +1,58 @@
+from __future__ import annotations
+
+from typing import Tuple
+
+from flask import Response, jsonify, request
+
+from common.response import Response as CommonResponse
+from domain.todo import InputAdd, InputEdit, InputGetAll, InputRemove, UseCase
+
+
+class HttpServiceFlaskV1:
+    """
+    HttpServiceFlaskV1 is an HTTP service handler using Flask.
+    It's responsible for handling and calling the right use case methods.
+    Avoid putting any business logic or data access code in this layer.
+    """
+
+    todo_usecase: UseCase
+
+    def __init__(self, todo_usecase: UseCase):
+        self.todo_usecase = todo_usecase
+
+    def get_all(self) -> Tuple[Response, int]:
+        try:
+            inpt = InputGetAll.model_validate_strings(request.args.to_dict())
+            result = self.todo_usecase.get_all(inpt)
+
+            return jsonify(CommonResponse().ok(result.rows)), 200
+        except Exception as e:
+            return jsonify(CommonResponse().error(e)), 500
+
+    def add(self) -> Tuple[Response, int]:
+        try:
+            inpt = InputAdd.model_validate_json(request.get_data())
+            result = self.todo_usecase.add(inpt)
+
+            return jsonify(CommonResponse().ok(result)), 200
+        except Exception as e:
+            return jsonify(CommonResponse().error(e)), 500
+
+    def edit(self) -> Tuple[Response, int]:
+        try:
+            inpt = InputEdit.model_validate_json(request.get_data())
+            result = self.todo_usecase.edit(inpt)
+
+            return jsonify(CommonResponse().ok(result)), 200
+        except Exception as e:
+            return jsonify(CommonResponse().error(e)), 500
+
+    def remove(self) -> Tuple[Response, int]:
+        try:
+            inpt = InputRemove.model_validate_json(request.get_data())
+
+            self.todo_usecase.remove(inpt)
+
+            return jsonify(CommonResponse().ok(None)), 200
+        except Exception as e:
+            return jsonify(CommonResponse().error(e)), 500

@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  {{PROJECT_NAME}}-{{LANGUAGE_NAME}}:
+    image: {{PROJECT_NAME}}-{{LANGUAGE_NAME}}
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    build:
+      context: .
+    restart: always

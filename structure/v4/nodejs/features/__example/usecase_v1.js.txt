@@ -1,0 +1,46 @@
+const { UseCase, Repository } = require('../../domain/{{TEMPLATE_NAME}}');
+
+/**
+ * UseCaseV1 is a basic business logic implementation of the `UseCase` blueprint.
+ * It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
+ * Its job is to orchestrate the steps needed to complete a user action.
+ *
+ * @class
+ * @extends {UseCase}
+ * @implements {UseCase}
+ */
+class UseCaseV1 extends UseCase  {
+    /**
+     * @type {Repository}
+     */
+    {{TEMPLATE_NAME}}Repository;
+
+    /**
+     * @param {Repository} {{TEMPLATE_NAME}}Repository
+     *
+     * @throws {TypeError}
+     */
+    constructor({{TEMPLATE_NAME}}Repository) {
+        super();
+
+        this.{{TEMPLATE_NAME}}Repository = {{TEMPLATE_NAME}}Repository;
+
+        this.validate();
+    }
+
+    /**
+     * @returns {void}
+     * @throws {TypeError}
+     */
+    validate() {
+        if (!(this.{{TEMPLATE_NAME}}Repository instanceof Repository)) {
+            throw new TypeError('`{{TEMPLATE_NAME}}Repository` must be an instance of {{TEMPLATE_NAME_PASCAL_CASE}} Repository blueprint');
+        }
+    }
+
+    // ...
+}
+
+module.exports = {
+    UseCaseV1,
+};

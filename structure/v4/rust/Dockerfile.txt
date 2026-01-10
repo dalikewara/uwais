@@ -1,0 +1,23 @@
+FROM rust:1.81-alpine
+
+# Install system dependecies
+RUN apk update
+RUN apk add --no-cache git
+RUN apk add --no-cache tzdata
+RUN apk add --no-cache build-base
+RUN apk add --no-cache make
+RUN apk add --no-cache dos2unix
+ENV TZ Asia/Jakarta
+
+# Setup the app
+WORKDIR /{{PROJECT_NAME}}-{{LANGUAGE_NAME}}
+COPY . .
+RUN find ./infra -type f -name "*.sh" -exec dos2unix {} \;
+RUN chmod +x ./infra/build.sh
+RUN chmod +x ./infra/start.sh
+
+# Build the app
+RUN ./infra/build.sh
+
+# Run apps
+ENTRYPOINT ["/{{PROJECT_NAME}}-{{LANGUAGE_NAME}}/infra/start.sh"]

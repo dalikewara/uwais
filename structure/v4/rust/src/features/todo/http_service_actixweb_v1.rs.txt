@@ -1,0 +1,57 @@
+use actix_web::{HttpResponse, Responder, web};
+use std::sync::Arc;
+
+use crate::common::response as common_response;
+use crate::domain::todo as domain_todo;
+
+// This is an HTTP service handler using Actix-Web.
+// It's responsible for handling and calling the right use case methods.
+// Avoid putting any business logic or data access code in this layer.
+
+pub async fn get_all(
+    query: web::Query<domain_todo::InputGetAll>,
+    usecase: web::Data<Arc<dyn domain_todo::UseCase>>,
+) -> impl Responder {
+    match usecase.get_all(query.into_inner()).await {
+        Ok(result) => HttpResponse::Ok().json(common_response::Response::new_ok(result.rows)),
+        Err(err) => {
+            HttpResponse::InternalServerError().json(common_response::Response::new_error(err))
+        }
+    }
+}
+
+pub async fn add(
+    body: web::Json<domain_todo::InputAdd>,
+    usecase: web::Data<Arc<dyn domain_todo::UseCase>>,
+) -> impl Responder {
+    match usecase.add(body.into_inner()).await {
+        Ok(result) => HttpResponse::Ok().json(common_response::Response::new_ok(result)),
+        Err(err) => {
+            HttpResponse::InternalServerError().json(common_response::Response::new_error(err))
+        }
+    }
+}
+
+pub async fn edit(
+    body: web::Json<domain_todo::InputEdit>,
+    usecase: web::Data<Arc<dyn domain_todo::UseCase>>,
+) -> impl Responder {
+    match usecase.edit(body.into_inner()).await {
+        Ok(result) => HttpResponse::Ok().json(common_response::Response::new_ok(result)),
+        Err(err) => {
+            HttpResponse::InternalServerError().json(common_response::Response::new_error(err))
+        }
+    }
+}
+
+pub async fn remove(
+    body: web::Json<domain_todo::InputRemove>,
+    usecase: web::Data<Arc<dyn domain_todo::UseCase>>,
+) -> impl Responder {
+    match usecase.remove(body.into_inner()).await {
+        Ok(_) => HttpResponse::Ok().json(common_response::Response::new_ok(None::<()>)),
+        Err(err) => {
+            HttpResponse::InternalServerError().json(common_response::Response::new_error(err))
+        }
+    }
+}

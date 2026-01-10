@@ -1,0 +1,14 @@
+from domain.{{TEMPLATE_NAME}} import UseCase, Repository
+
+
+class UseCaseV1(UseCase):
+    """
+    UseCaseV1 is a basic business logic implementation of the `UseCase` blueprint.
+    It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
+    Its job is to orchestrate the steps needed to complete a user action.
+    """
+
+    {{TEMPLATE_NAME}}_repository: Repository
+
+    def __init__(self, {{TEMPLATE_NAME}}_repository: Repository):
+        self.{{TEMPLATE_NAME}}_repository = {{TEMPLATE_NAME}}_repository

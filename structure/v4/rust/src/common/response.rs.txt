@@ -1,0 +1,29 @@
+use serde::Serialize;
+use std::fmt::Display;
+
+/// Response is a standard response format for all API responses.
+#[derive(Serialize)]
+pub struct Response {
+    status: bool,
+    message: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    data: Option<serde_json::Value>,
+}
+
+impl Response {
+    pub fn new_ok<T: Serialize>(data: T) -> Self {
+        Self {
+            status: true,
+            message: "ok".to_string(),
+            data: Some(serde_json::to_value(data).unwrap_or_default()),
+        }
+    }
+
+    pub fn new_error<E: Display>(err: E) -> Self {
+        Self {
+            status: false,
+            message: err.to_string(),
+            data: None,
+        }
+    }
+}

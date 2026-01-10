@@ -1,0 +1,18 @@
+import { UseCase } from '@domain/{{TEMPLATE_NAME}}';
+
+/**
+ * HttpServiceV1 is an HTTP service handler.
+ * It's responsible for routing and calling the right use case methods.
+ * Avoid putting any business logic or data access code in this layer.
+ *
+ * @class
+ */
+export class HttpServiceV1 {
+    {{TEMPLATE_NAME}}UseCase: UseCase;
+
+    constructor({{TEMPLATE_NAME}}UseCase: UseCase) {
+        this.{{TEMPLATE_NAME}}UseCase = {{TEMPLATE_NAME}}UseCase;
+    }
+
+    // ...
+}

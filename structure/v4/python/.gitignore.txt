@@ -2,8 +2,6 @@
 .env*
 *.env
 !.env.example
-!.env.txt
-!.env.example.txt
 
 # OS X
 .DS_Store*
@@ -32,13 +30,6 @@ Desktop.ini
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-
-# Node artifact files
-node_modules/
-dist/
-
-# Compiled Java class files
-*.class
 
 # Compiled Python bytecode
 *.py[cod]

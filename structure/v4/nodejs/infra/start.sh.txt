@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo "running './main.js'" && node ./main.js

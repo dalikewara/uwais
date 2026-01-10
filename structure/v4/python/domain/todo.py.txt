@@ -1,0 +1,320 @@
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from datetime import datetime
+from typing import List
+
+from pydantic import BaseModel, Field
+
+# ------------------------------------------------------------------
+# Contract
+# ------------------------------------------------------------------
+#
+# This is the "Contract" or agreement for the domain model.
+# It's called a contract because it only defines what needs to be done,
+# without worrying about how to do it.
+# Think of it as a blueprint, not the actual implementation.
+#
+# ------------------------------------------------------------------
+
+
+class Repository(ABC):
+    """
+    Repository is the blueprint for the data storage layer.
+    It acts as a bridge between the business logic and the database or other data sources.
+    This allows the data sources to be changed without altering the business logic.
+    """
+
+    @abstractmethod
+    def find_all(self, query_filter: QueryFilter) -> ToDoList:
+        """
+        Raises:
+            NotImplementedError: If not implemented.
+            Exception
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def find_one(self, query_filter: QueryFilter) -> ToDo | None:
+        """
+        Raises:
+            NotImplementedError: If not implemented.
+            Exception
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def insert(self, data: ToDo) -> None:
+        """
+        Raises:
+            NotImplementedError: If not implemented.
+            Exception
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def update(self, data: ToDo) -> None:
+        """
+        Raises:
+            NotImplementedError: If not implemented.
+            Exception
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def delete(self, data: ToDo) -> None:
+        """
+        Raises:
+            NotImplementedError: If not implemented.
+            Exception
+        """
+        raise NotImplementedError
+
+
+class UseCase(ABC):
+    """
+    UseCase is the blueprint for the business logic.
+    All the business rules for `ToDo` operations are here, such as how to add, edit, or retrieve data.
+    It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
+    """
+
+    @abstractmethod
+    def get_all(self, inpt: InputGetAll) -> DTO1List:
+        """
+        Raises:
+            NotImplementedError: If not implemented.
+            Exception
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def add(self, inpt: InputAdd) -> DTO1:
+        """
+        Raises:
+            NotImplementedError: If not implemented.
+            Exception
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def edit(self, inpt: InputEdit) -> DTO1:
+        """
+        Raises:
+            NotImplementedError: If not implemented.
+            Exception
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def remove(self, inpt: InputRemove) -> None:
+        """
+        Raises:
+            NotImplementedError: If not implemented.
+            Exception
+        """
+        raise NotImplementedError
+
+
+# ------------------------------------------------------------------
+# Model
+# ------------------------------------------------------------------
+#
+# This model is the representation of `ToDo` data.
+# It stores data and has methods (functions) to process the data itself.
+#
+# ------------------------------------------------------------------
+class ToDo:
+    """
+    ToDo is the main data structure for storing task data.
+    The `id` is for identification, the `title` is for the title,
+    and `create_at` and `updated_at` track when it was created and updated.
+    """
+
+    def __init__(self, title: str):
+        time_now = datetime.now()
+
+        self.id: int = 0
+        self.title: str = title
+        self.created_at: datetime = time_now
+        self.updated_at: datetime = time_now
+
+    def set_created_at_now(self):
+        self.created_at = datetime.now()
+
+    def set_updated_at_now(self):
+        self.updated_at = datetime.now()
+
+    def get_formatted_created_at(self) -> str:
+        return self.created_at.isoformat()
+
+    def get_formatted_updated_at(self) -> str:
+        return self.updated_at.isoformat()
+
+    def with_id(self, value: int) -> ToDo:
+        self.id = value
+
+        return self
+
+    def to_dto1(self) -> DTO1:
+        return DTO1(
+            id=self.id,
+            title=self.title,
+            created_at=self.get_formatted_created_at(),
+            updated_at=self.get_formatted_updated_at(),
+        )
+
+
+class ToDoList:
+    """
+    ToDoList is a collection of `ToDo` items.
+    """
+
+    def __init__(self, rows: List[ToDo] | None = None):
+        self.rows: list[ToDo] = []
+
+        # By using this style, you can add additional properties that might be useful
+        # ...
+
+        if rows:
+            for row in rows:
+                self.push(row)
+
+    def push(self, row: ToDo):
+        self.rows.append(row)
+
+    def first(self) -> ToDo | None:
+        if self.len() < 1:
+            return None
+
+        return self.rows[0]
+
+    def last(self) -> ToDo | None:
+        if self.len() < 1:
+            return None
+
+        return self.rows[self.len() - 1]
+
+    def len(self) -> int:
+        return len(self.rows)
+
+    def to_dto1_list(self) -> DTO1List:
+        result = DTO1List()
+
+        for row in self.rows:
+            result.push(row.to_dto1())
+
+        return result
+
+
+# ------------------------------------------------------------------
+# DTO (Data Transfer Object)
+# ------------------------------------------------------------------
+#
+# A DTO is just for transferring data between layers or outside the system.
+# It has no business logic at all; it's just a data "wrapper."
+#
+# ------------------------------------------------------------------
+
+
+class DTO1(BaseModel):
+    """
+    DTO1 is a data transfer version of `ToDo`,
+    containing only the data that will be sent out (e.g., to the frontend).
+    Note that `created_at` and `updated_at` are now strings, not `datetime` anymore.
+    """
+
+    id: int = 0
+    title: str = ""
+    created_at: str = ""
+    updated_at: str = ""
+
+
+class DTO1List:
+    """
+    DTO1List is a collection of `DTO1` items.
+    """
+
+    def __init__(self, rows: List[DTO1] | None = None):
+        self.rows: list[DTO1] = []
+
+        # By using this style, you can add additional properties that might be useful
+        # ...
+
+        if rows:
+            for row in rows:
+                self.push(row)
+
+    def push(self, row: DTO1):
+        self.rows.append(row)
+
+
+# ------------------------------------------------------------------
+# Filter
+# ------------------------------------------------------------------
+#
+# This is a data structure for filtering or searching data.
+# For example, to search for a `ToDo` with a specific `id`.
+#
+# ------------------------------------------------------------------
+
+
+class QueryFilter:
+    """
+    QueryFilter holds the parameters for data searches.
+    """
+
+    def __init__(self):
+        self.id: int | None = None
+        self.limit: int = 0
+
+    def with_id(self, value: int) -> QueryFilter:
+        self.id = value
+
+        return self
+
+    def with_limit(self, limit: int) -> QueryFilter:
+        self.limit = limit
+
+        return self
+
+
+# ------------------------------------------------------------------
+# Input
+# ------------------------------------------------------------------
+#
+# Input is data that enters the system, usually from an HTTP request.
+#
+# ------------------------------------------------------------------
+
+
+class InputGetAll(BaseModel):
+    """
+    InputGetAll is the input data for retrieving todos.
+    """
+
+    limit: int = Field(default=0)
+
+
+class InputAdd(BaseModel):
+    """
+    InputAdd is the input data for adding a new todo.
+    """
+
+    title: str = Field(..., min_length=1, max_length=255)
+
+
+class InputEdit(BaseModel):
+    """
+    InputEdit is the input data for updating an existing todo.
+    """
+
+    id: int = Field(..., ge=1)
+    title: str = Field(..., min_length=1, max_length=255)
+
+
+class InputRemove(BaseModel):
+    """
+    InputRemove is the input data for deleting a todo.
+    """
+
+    id: int = Field(..., ge=1)

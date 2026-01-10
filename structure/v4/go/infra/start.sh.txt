@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir tmp || true
+(echo "running './main'" && ./main) || (echo "'./main' binary is not available" && echo "running 'go run main.go'" && go run main.go)

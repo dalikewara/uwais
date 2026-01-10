@@ -1,0 +1,342 @@
+// ------------------------------------------------------------------
+// Contract
+// ------------------------------------------------------------------
+//
+// This is the "Contract" or agreement for the domain model.
+// It's called a contract because it only defines what needs to be done,
+// without worrying about how to do it.
+// Think of it as a blueprint, not the actual implementation.
+//
+// ------------------------------------------------------------------
+
+/**
+ * Repository is the blueprint for the data storage layer.
+ * It acts as a bridge between the business logic and the database or other data sources.
+ * This allows the data sources to be changed without altering the business logic.
+ *
+ * @interface
+ * @abstract
+ */
+export interface Repository {
+    /**
+     * @throws {Error}
+     */
+    findAll(queryFilter: QueryFilter): Promise<ToDoList>;
+
+    /**
+     * @throws {Error}
+     */
+    findOne(queryFilter: QueryFilter): Promise<ToDo | null>;
+
+    /**
+     * @throws {Error}
+     */
+    insert(data: ToDo): Promise<void>;
+
+    /**
+     * @throws {Error}
+     */
+    update(data: ToDo): Promise<void>;
+
+    /**
+     * @throws {Error}
+     */
+    delete(data: ToDo): Promise<void>;
+}
+
+/**
+ * UseCase is the blueprint for the business logic.
+ * All the business rules for todo operations are here, such as how to add, edit, or retrieve data.
+ * It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
+ *
+ * @interface
+ * @abstract
+ */
+export interface UseCase {
+    /**
+     * @throws {Error}
+     */
+    getAll(input: InputGetAll): Promise<DTO1List>;
+
+    /**
+     * @throws {Error}
+     */
+    add(input: InputAdd): Promise<DTO1>;
+
+    /**
+     * @throws {Error}
+     */
+    edit(input: InputEdit): Promise<DTO1>;
+
+    /**
+     * @throws {Error}
+     */
+    remove(input: InputRemove): Promise<void>;
+}
+
+// ------------------------------------------------------------------
+// Model
+// ------------------------------------------------------------------
+//
+// This model is the representation of todo data.
+// It stores data and has methods (functions) to process the data itself.
+//
+// ------------------------------------------------------------------
+
+/**
+ * ToDo is the main data structure for storing task data.
+ * The `id` is for identification, the `title` is for the title,
+ * and `created_at` and `updated_at` track when it was created and updated.
+ *
+ * @class
+ */
+export class ToDo {
+    id: number = 0;
+    title: string = '';
+    created_at: Date = new Date();
+    updated_at: Date = new Date();
+
+    constructor(title: string = '') {
+        let now = new Date();
+
+        this.title = title;
+        this.created_at = now;
+        this.updated_at = now;
+    }
+
+    setCreatedAtNow(): void {
+        this.created_at = new Date();
+    }
+
+    setUpdatedAtNow(): void {
+        this.updated_at = new Date();
+    }
+
+    getFormattedCreatedAt(): string {
+        return this.created_at.toISOString();
+    }
+
+    getFormattedUpdatedAt(): string {
+        return this.updated_at.toISOString();
+    }
+
+    withID(id: number): ToDo {
+        this.id = id;
+
+        return this;
+    }
+
+    toDTO1(): DTO1 {
+        return new DTO1({
+            id: this.id,
+            title: this.title,
+            created_at: this.getFormattedCreatedAt(),
+            updated_at: this.getFormattedUpdatedAt(),
+        });
+    }
+}
+
+/**
+ * ToDoList is a collection of `ToDo` items.
+ *
+ * @class
+ */
+export class ToDoList {
+    rows: ToDo[] = [];
+
+    // By using this style, you can add additional properties that might be useful
+    // ...
+
+    constructor(rows: ToDo[] = []) {
+        for (let i = 0; i < rows.length; i++) {
+            this.push(rows[i]);
+        }
+    }
+
+    push(row: ToDo): void {
+        this.rows.push(row);
+    }
+
+    first(): ToDo | null {
+        if (this.len() < 1) {
+            return null
+        }
+
+        return this.rows[0];
+    }
+
+    last(): ToDo | null {
+        if (this.len() < 1) {
+            return null
+        }
+
+        return this.rows[this.rows.length - 1];
+    }
+
+    len(): number {
+        return this.rows.length;
+    }
+
+    toDTO1List(): DTO1List {
+        let result = new DTO1List();
+
+        for (let i = 0; i < this.len(); i++) {
+            result.push(this.rows[i].toDTO1());
+        }
+
+        return result;
+    }
+}
+
+// ------------------------------------------------------------------
+// DTO (Data Transfer Object)
+// ------------------------------------------------------------------
+//
+// A DTO is just for transferring data between layers or outside the system.
+// It has no business logic at all; it's just a data "wrapper."
+//
+// ------------------------------------------------------------------
+
+/**
+ * DTO1 is a data transfer version of `ToDo`,
+ * containing only the data that will be sent out (e.g., to the frontend).
+ * Note that `created_at` and `updated_at` are now strings, not `Date` anymore.
+ *
+ * @class
+ */
+export class DTO1 {
+    id: number = 0;
+    title: string = '';
+    created_at: string = '';
+    updated_at: string = '';
+
+    constructor(obj: Object = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+/**
+ * DTO1List is a collection of `DTO1` items.
+ *
+ * @class
+ */
+export class DTO1List {
+    rows: DTO1[] = [];
+
+    // By using this style, you can add additional properties that might be useful
+    // ...
+
+    constructor(rows: DTO1[] = []) {
+        for (let i = 0; i < rows.length; i++) {
+            this.push(rows[i]);
+        }
+    }
+
+    push(row: DTO1): void {
+        this.rows.push(row);
+    }
+}
+
+// ------------------------------------------------------------------
+// Filter
+// ------------------------------------------------------------------
+//
+// This is a data structure for filtering or searching data.
+// For example, to search for a todo with a specific `id`.
+//
+// ------------------------------------------------------------------
+
+/**
+ * QueryFilter holds the parameters for data searches.
+ *
+ * @class
+ */
+export class QueryFilter {
+    id: number | null | undefined = null;
+    limit: number = 0;
+
+    withID(id: number): QueryFilter {
+        this.id = id;
+
+        return this;
+    }
+
+    withLimit(limit: number): QueryFilter {
+        this.limit = limit;
+
+        return this;
+    }
+}
+
+// ------------------------------------------------------------------
+// Input
+// ------------------------------------------------------------------
+//
+// Input is data that enters the system, usually from an HTTP request.
+//
+// ------------------------------------------------------------------
+
+/**
+ * InputGetAll is the input data for retrieving todos.
+ *
+ * @class
+ */
+export class InputGetAll {
+    limit: number = 0;
+
+    /**
+     * @throws {TypeError}
+     */
+    constructor(obj: Object = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+/**
+ * InputAdd is the input data for adding a new todo.
+ *
+ * @class
+ */
+export class InputAdd {
+    title: string = '';
+
+    /**
+     * @throws {TypeError}
+     */
+    constructor(obj: Object = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+/**
+ * InputEdit is the input data for updating an existing todo.
+ *
+ * @class
+ */
+export class InputEdit {
+    id: number = 0;
+    title: string = '';
+
+    /**
+     * @throws {TypeError}
+     */
+    constructor(obj: Object = {}) {
+        Object.assign(this, obj);
+    }
+}
+
+/**
+ * InputRemove is the input data for deleting a todo.
+ *
+ * @class
+ */
+export class InputRemove {
+    id: number = 0;
+
+    /**
+     * @throws {TypeError}
+     */
+    constructor(obj = {}) {
+        Object.assign(this, obj);
+    }
+}

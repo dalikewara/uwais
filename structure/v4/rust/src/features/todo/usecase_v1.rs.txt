@@ -1,0 +1,70 @@
+use async_trait::async_trait;
+use std::sync::Arc;
+
+use crate::domain::todo as domain_todo;
+
+/// Impl is a basic business logic implementation of the `domain::todo::UseCase` trait.
+/// It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
+/// Its job is to orchestrate the steps needed to complete a user action.
+pub struct Impl {
+    todo_repository: Arc<dyn domain_todo::Repository>,
+}
+
+impl Impl {
+    pub fn new(todo_repository: Arc<dyn domain_todo::Repository>) -> Self {
+        Self { todo_repository }
+    }
+}
+
+#[async_trait]
+impl domain_todo::UseCase for Impl {
+    async fn get_all(
+        &self,
+        input: domain_todo::InputGetAll,
+    ) -> Result<domain_todo::DTO1List, String> {
+        let todos = self
+            .todo_repository
+            .find_all(domain_todo::QueryFilter::default().with_limit(input.limit))
+            .await?;
+
+        Ok(todos.to_dto1_list())
+    }
+
+    async fn add(&self, input: domain_todo::InputAdd) -> Result<domain_todo::DTO1, String> {
+        let mut todo = domain_todo::ToDo::new(input.title);
+
+        self.todo_repository.insert(&mut todo).await?;
+
+        Ok(todo.to_dto1())
+    }
+
+    async fn edit(&self, input: domain_todo::InputEdit) -> Result<domain_todo::DTO1, String> {
+        let mut todo = match self
+            .todo_repository
+            .find_one(domain_todo::QueryFilter::default().with_id(input.id))
+            .await?
+        {
+            Some(t) => t,
+            None => return Err("Data not found".to_string()),
+        };
+
+        todo.title = input.title;
+
+        self.todo_repository.update(&mut todo).await?;
+
+        Ok(todo.to_dto1())
+    }
+
+    async fn remove(&self, input: domain_todo::InputRemove) -> Result<(), String> {
+        let todo = match self
+            .todo_repository
+            .find_one(domain_todo::QueryFilter::default().with_id(input.id))
+            .await?
+        {
+            Some(t) => t,
+            None => return Err("Data not found".to_string()),
+        };
+
+        self.todo_repository.delete(&todo).await
+    }
+}

@@ -1,6 +1,11 @@
 #!/bin/sh
 
 mkdir tmp || true
+
+if ! [ -f ".env" ] && [ -f ".env.example" ]; then
+    cp .env.example .env
+fi
+
 go mod tidy
 {{VENDORING_SCRIPT}}
 go build -o main

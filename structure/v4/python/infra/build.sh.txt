@@ -1,5 +1,10 @@
 #!/bin/sh
 
 mkdir tmp || true
+
+if ! [ -f ".env" ] && [ -f ".env.example" ]; then
+    cp .env.example .env
+fi
+
 venv/bin/python -m venv venv || python3 -m venv venv || python -m venv venv || py -m venv venv
 venv/bin/pip install -r requirements.txt || pip install -r requirements.txt

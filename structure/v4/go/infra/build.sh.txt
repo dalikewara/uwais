@@ -1,5 +1,6 @@
 #!/bin/sh
 
 mkdir tmp || true
-go mod tidy{{VENDORING_SCRIPT}}
+go mod tidy
+{{VENDORING_SCRIPT}}
 go build -o main

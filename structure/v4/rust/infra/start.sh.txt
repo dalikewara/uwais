@@ -1,4 +1,9 @@
 #!/bin/sh
 
 mkdir tmp || true
+
+if ! [ -f ".env" ] && [ -f ".env.example" ]; then
+    cp .env.example .env
+fi
+
 (echo "running './target/release/main'" && ./target/release/main) || (echo "'./target/release/main' binary is not available" && echo "running 'cargo run'" && cargo run)

@@ -1,4 +1,9 @@
 #!/bin/sh
 
 mkdir tmp || true
+
+if ! [ -f ".env" ] && [ -f ".env.example" ]; then
+    cp .env.example .env
+fi
+
 venv/bin/python main.py || python3 main.py || python main.py || py main.py

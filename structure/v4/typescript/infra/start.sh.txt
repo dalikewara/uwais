@@ -2,4 +2,9 @@
 
 ./node_modules/.bin/tsc || tsc
 ./node_modules/.bin/tsc-alias || tsc-alias
+
+if ! [ -f ".env" ] && [ -f ".env.example" ]; then
+    cp .env.example .env
+fi
+
 echo "running './dist/main.js'" && node ./dist/main.js

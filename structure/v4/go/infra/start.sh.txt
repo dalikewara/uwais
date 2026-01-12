@@ -1,4 +1,9 @@
 #!/bin/sh
 
 mkdir tmp || true
+
+if ! [ -f ".env" ] && [ -f ".env.example" ]; then
+    cp .env.example .env
+fi
+
 (echo "running './main'" && ./main) || (echo "'./main' binary is not available" && echo "running 'go run main.go'" && go run main.go)

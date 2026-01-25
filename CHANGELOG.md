@@ -2,7 +2,7 @@
 
 ## 2026
 
-- **v2.0.3 - v2.0.5** (2026-01-12 - 2026-01-25)
+- **v2.0.3 - v2.0.6** (2026-01-12 - 2026-01-25)
   - Fixed Linux & MacOS update command process
   - Fixed some issues
 

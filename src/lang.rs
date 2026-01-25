@@ -228,7 +228,17 @@ impl Lang {
                 packages.iter().map(move |package| {
                     cmd_template
                         .iter()
-                        .map(|c| c.replace(PACKAGE_NAME_PLACEHOLDER, package))
+                        .flat_map(|c| {
+                            let replaced = c.replace(PACKAGE_NAME_PLACEHOLDER, package);
+                            if c.contains(PACKAGE_NAME_PLACEHOLDER) {
+                                replaced
+                                    .split_whitespace()
+                                    .map(|s| s.to_string())
+                                    .collect::<Vec<String>>()
+                            } else {
+                                vec![replaced]
+                            }
+                        })
                         .collect()
                 })
             })

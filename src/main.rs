@@ -1196,7 +1196,7 @@ fn execute_setup_commands(structure: &mut Structure, project_path: &PathBuf) {
                 "chrono",
                 "once_cell",
                 "actix_web",
-                "serde",
+                "serde --features derive",
                 "serde_json",
                 "async_trait",
             ];

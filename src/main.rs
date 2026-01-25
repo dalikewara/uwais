@@ -172,7 +172,9 @@ fn update_windows_binary(os: OS, source_filepath: &PathBuf, std_text: &str, sour
 }
 
 fn update_unix_binary(os: OS, source_filepath: &PathBuf, std_text: &str, source: &mut Source) {
-    if let Err(err) = copy_file(source_filepath, &os.app_path) {
+    let updater_task_filepath = os.get_app_updater_task_filepath_from_main_process();
+
+    if let Err(err) = copy_file(source_filepath, &updater_task_filepath) {
         let err_string = err.to_string();
 
         if err_string.contains("Permission denied") || err_string.contains("os error 13") {
@@ -189,6 +191,20 @@ fn update_unix_binary(os: OS, source_filepath: &PathBuf, std_text: &str, source:
         source.clear();
         exit(1);
     }
+
+    if !updater_task_filepath.is_file() {
+        print_done("No latest update available");
+        source.clear();
+        exit(0);
+    }
+
+    let _ = exec_spawn(
+        cwd(),
+        &[
+            path_to_str(&updater_task_filepath).as_str(),
+            "--updater-task",
+        ],
+    );
 }
 
 fn handle_updater_task(os: OS) {
@@ -201,7 +217,7 @@ fn handle_updater_task(os: OS) {
 
     loop {
         match os.kind {
-            OSKind::Windows => {
+            OSKind::Windows | OSKind::Linux | OSKind::MacOS => {
                 let target_app_filepath = os.get_app_filepath_from_updater_task_child_process();
 
                 if copy_file(&os.app_path, &target_app_filepath).is_ok() {
@@ -232,7 +248,7 @@ fn handle_updater_task_clearance(os: OS) {
 
     loop {
         match os.kind {
-            OSKind::Windows => {
+            OSKind::Windows | OSKind::Linux | OSKind::MacOS => {
                 let updater_task_filepath = os.get_app_updater_task_filepath_from_main_process();
                 if !updater_task_filepath.is_file() {
                     return;

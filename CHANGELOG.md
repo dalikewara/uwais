@@ -2,14 +2,15 @@
 
 ## 2026
 
-- **v2.0.3** (2026-01-12)
-  - Fix some issues
+- **v2.0.3 - v2.0.4** (2026-01-12 - 2026-01-25)
+  - Fixed Linux & MacOS update command process
+  - Fixed some issues
 
 - **v1.2.0 - v2.0.2** (2026-01-11)
-  - Update `README`
+  - Updated `README`
   - Added backward compatibility scripts for the Rust upgrade
-  - Complete rewrite in Rust
-  - Fix some issues
+  - Completed rewrite in Rust
+  - Fixed some issues
 
 ## 2025
 

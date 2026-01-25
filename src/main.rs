@@ -142,10 +142,12 @@ fn update_windows_binary(os: OS, source_filepath: &PathBuf, std_text: &str, sour
         if err_string.contains("os error 5") || err_string.contains("Access is denied") {
             print_err("Access denied - Administrator privileges required");
             print_warn("Please run this command as Administrator:");
+            print_text("");
             print_text("  1. Open Command Prompt or PowerShell as Administrator");
             print_text("  2. Run: uwais update");
             print_text("");
             print_text("Alternatively, run the installer again to update:");
+            print_text("");
             print_text("  Download the latest installer from:");
             print_text("  https://github.com/dalikewara/uwais/releases/latest");
         } else {
@@ -180,9 +182,11 @@ fn update_unix_binary(os: OS, source_filepath: &PathBuf, std_text: &str, source:
         if err_string.contains("Permission denied") || err_string.contains("os error 13") {
             print_err("Permission denied - Elevated privileges required");
             print_warn("Please run this command with sudo:");
+            print_text("");
             print_text(&format!("  sudo uwais update"));
             print_text("");
             print_text("Or reinstall using the installation script:");
+            print_text("");
             print_text("  curl -sSL https://raw.githubusercontent.com/dalikewara/uwais/master/install.sh | sh");
         } else {
             print_err_with_info(std_text, &err);

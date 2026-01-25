@@ -147,7 +147,7 @@ install_unix() {
 
     if [ -x "$INSTALL_DIR/$BINARY_NAME" ]; then
         print_info "$BINARY_NAME installed successfully!"
-        print_info "Version: $("$INSTALL_DIR/$BINARY_NAME" --version 2>/dev/null || echo 'unknown')"
+        print_info "Version: $("$INSTALL_DIR/$BINARY_NAME" version 2>/dev/null || echo 'unknown')"
         print_info "Location: $INSTALL_DIR/$BINARY_NAME"
     else
         print_error "Installation verification failed"

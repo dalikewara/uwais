@@ -822,6 +822,10 @@ fn register_rust_module(dst: &PathBuf, current_lang: &Lang) {
 }
 
 fn update_rust_mod_files(parent_dir: &PathBuf, mod_name: &str, lang: &Lang) {
+    if mod_name == "mod" {
+        return;
+    }
+
     for mod_file_name in &lang.mod_file_names {
         let mod_file_path = parent_dir.join(mod_file_name);
         if !mod_file_path.is_file() {
@@ -830,7 +834,6 @@ fn update_rust_mod_files(parent_dir: &PathBuf, mod_name: &str, lang: &Lang) {
 
         if let Ok(mut mod_content) = read_file(&mod_file_path) {
             let mod_statement = format!("{} {};", lang.mod_prefix, mod_name);
-
             if mod_content.contains(&mod_statement) {
                 continue;
             }

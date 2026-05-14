@@ -12,6 +12,8 @@ export class HttpServiceV1 {
 
     constructor({{TEMPLATE_NAME}}UseCase: UseCase) {
         this.{{TEMPLATE_NAME}}UseCase = {{TEMPLATE_NAME}}UseCase;
+
+        // this.someFunction = this.someFunction.bind(this);
     }
 
     // ...

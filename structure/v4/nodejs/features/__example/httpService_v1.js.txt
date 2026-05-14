@@ -22,6 +22,8 @@ class HttpServiceV1 {
         this.{{TEMPLATE_NAME}}UseCase = {{TEMPLATE_NAME}}UseCase;
 
         this.validate();
+
+        // this.someFunction = this.someFunction.bind(this);
     }
 
     /**

@@ -25,6 +25,11 @@ class HttpServiceHyperExpressV1 {
         this.todoUseCase = todoUseCase;
 
         this.validate();
+
+        this.getAll = this.getAll.bind(this);
+        this.add = this.add.bind(this);
+        this.edit = this.edit.bind(this);
+        this.remove = this.remove.bind(this);
     }
 
     /**

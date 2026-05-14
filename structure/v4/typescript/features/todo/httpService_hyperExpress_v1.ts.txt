@@ -15,6 +15,11 @@ export class HttpServiceHyperExpressV1 {
 
     constructor(todoUseCase: UseCase) {
         this.todoUseCase = todoUseCase;
+
+        this.getAll = this.getAll.bind(this);
+        this.add = this.add.bind(this);
+        this.edit = this.edit.bind(this);
+        this.remove = this.remove.bind(this);
     }
 
     async getAll(req: Request, res: Response): Promise<void> {

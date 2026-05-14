@@ -2,6 +2,9 @@
 
 ## 2026
 
+- **v2.0.8** (2026-02-14)
+  - Fix node & typescript hyper express binding
+
 - **v2.0.7** (2026-02-14)
   - Fixed some issues
 

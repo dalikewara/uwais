@@ -129,7 +129,10 @@ jobs:
           echo [Setup] >> installer.iss
           echo AppName=uwais >> installer.iss
           echo AppVersion={#MyAppVersion} >> installer.iss
-          echo DefaultDirName={pf}\uwais >> installer.iss
+          echo AppPublisher=Dali Kewara >> installer.iss
+          echo AppPublisherURL=https://github.com/dalikewara/uwais >> installer.iss
+          echo PrivilegesRequired=lowest >> installer.iss
+          echo DefaultDirName={localappdata}\uwais >> installer.iss
           echo DefaultGroupName=uwais >> installer.iss
           echo OutputBaseFilename=uwais-v{#MyAppVersion}-installer >> installer.iss
           echo Compression=lzma >> installer.iss

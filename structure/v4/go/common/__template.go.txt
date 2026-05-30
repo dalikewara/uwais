@@ -1,6 +1,6 @@
 package common
 
-// {{TEMPLATE_NAME_PASCAL_CASE}} implements the core logic for this functionality.
+// Add your function description here...
 func {{TEMPLATE_NAME_PASCAL_CASE}}() {
 	return
 }

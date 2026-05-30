@@ -2,6 +2,10 @@
 
 ## 2026
 
+- **v2.1.0** (2026-05-30)
+  - Fix windows installer
+  - Remove unecessary comments
+
 - **v2.0.8** (2026-02-14)
   - Fix node & typescript hyper express binding
 

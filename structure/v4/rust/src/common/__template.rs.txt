@@ -1,4 +1,4 @@
-/// {{TEMPLATE_NAME}} implements the core logic for this functionality.
+/// Add your function description here...
 pub fn {{TEMPLATE_NAME}}() {
     return
 }

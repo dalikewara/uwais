@@ -7,12 +7,12 @@ use crate::domain::{{TEMPLATE_NAME}}::{Repository, UseCase};
 /// It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
 /// Its job is to orchestrate the steps needed to complete a user action.
 pub struct Impl {
-    {{TEMPLATE_NAME}}_repository: Arc<dyn Repository>,
+    {{TEMPLATE_NAME}}_repo: Arc<dyn Repository + Send + Sync>,
 }
 
 impl Impl {
-    pub fn new({{TEMPLATE_NAME}}_repository: Arc<dyn Repository>) -> Self {
-        Self { {{TEMPLATE_NAME}}_repository }
+    pub fn new({{TEMPLATE_NAME}}_repo: Arc<dyn Repository + Send + Sync>) -> Self {
+        Self { {{TEMPLATE_NAME}}_repo }
     }
 }
 

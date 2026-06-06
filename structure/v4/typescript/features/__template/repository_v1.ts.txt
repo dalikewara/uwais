@@ -1,8 +1,8 @@
 import { Repository } from '@domain/{{TEMPLATE_NAME}}';
 
 /**
- * RepositoryV1 is a basic implementation of the `Repository` interface that
- * simulates a connection to a database.
+ * RepositoryV1 is an implementation of the `Repository` interface that
+ * connects to a data source.
  *
  * @class
  * @implements {Repository}

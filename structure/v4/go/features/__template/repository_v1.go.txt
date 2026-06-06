@@ -2,8 +2,8 @@ package {{TEMPLATE_NAME}}
 
 import "{{MODULE_NAME}}/domain"
 
-// repositoryV1 is a basic implementation of the `domain.{{TEMPLATE_NAME_PASCAL_CASE}}Repository` interface that
-// simulates a connection to a database.
+// repositoryV1 is an implementation of the `domain.{{TEMPLATE_NAME_PASCAL_CASE}}Repository` interface that
+// connects to a data source.
 type repositoryV1 struct {
 	// In a real app, you might want to inject a database connection here.
 	// db interface{}

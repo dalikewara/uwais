@@ -1,8 +1,8 @@
 const { Repository } = require('../../domain/{{TEMPLATE_NAME}}');
 
 /**
- * RepositoryV1 is a basic implementation of the `Repository` blueprint that
- * simulates a connection to a database.
+ * RepositoryV1 is an implementation of the `Repository` blueprint that
+ * connects to a data source.
  *
  * @class
  * @extends {Repository}

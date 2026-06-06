@@ -1,8 +1,8 @@
 use async_trait::async_trait;
 
-use crate::domain::{{TEMPLATE_NAME}} as domain_{{TEMPLATE_NAME}};
+use crate::domain::{{TEMPLATE_NAME}}::Repository;
 
-/// Impl is an implementation of the `domain::{{TEMPLATE_NAME}}::Repository` trait that
+/// Impl is an implementation of the `Repository` trait that
 /// connects to a data source.
 pub struct Impl {
     // In a real app, you might want to inject a database connection here.
@@ -16,4 +16,4 @@ impl Impl {
 }
 
 #[async_trait]
-impl domain_{{TEMPLATE_NAME}}::Repository for Impl {}
+impl Repository for Impl {}

@@ -1,20 +1,20 @@
 use async_trait::async_trait;
 use std::sync::Arc;
 
-use crate::domain::{{TEMPLATE_NAME}} as domain_{{TEMPLATE_NAME}};
+use crate::domain::{{TEMPLATE_NAME}}::{Repository, UseCase};
 
-/// Impl is a business logic implementation of the `domain::{{TEMPLATE_NAME}}::UseCase` trait.
+/// Impl is a business logic implementation of the `UseCase` trait.
 /// It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
 /// Its job is to orchestrate the steps needed to complete a user action.
 pub struct Impl {
-    {{TEMPLATE_NAME}}_repository: Arc<dyn domain_{{TEMPLATE_NAME}}::Repository>,
+    {{TEMPLATE_NAME}}_repository: Arc<dyn Repository>,
 }
 
 impl Impl {
-    pub fn new({{TEMPLATE_NAME}}_repository: Arc<dyn domain_{{TEMPLATE_NAME}}::Repository>) -> Self {
+    pub fn new({{TEMPLATE_NAME}}_repository: Arc<dyn Repository>) -> Self {
         Self { {{TEMPLATE_NAME}}_repository }
     }
 }
 
 #[async_trait]
-impl domain_{{TEMPLATE_NAME}}::UseCase for Impl {}
+impl UseCase for Impl {}

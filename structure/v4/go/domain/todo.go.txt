@@ -130,31 +130,31 @@ func (t *ToDoList) Len() int {
 }
 
 func (t *ToDoList) ToDTO1List() ToDoDTO1List {
-	var result ToDoDTO1List
+	var data ToDoDTO1List
 
 	for _, row := range t.Rows {
 		if row == nil {
 			continue
 		}
 
-		result.Push(row.ToDTO1())
+		data.Push(row.ToDTO1())
 	}
 
-	return result
+	return data
 }
 
 func NewToDoList(rows ...*ToDo) ToDoList {
-	var result ToDoList
+	var data ToDoList
 
 	for _, row := range rows {
 		if row == nil {
 			continue
 		}
 
-		result.Push(row)
+		data.Push(row)
 	}
 
-	return result
+	return data
 }
 
 // ------------------------------------------------------------------

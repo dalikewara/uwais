@@ -78,12 +78,12 @@ class {{TEMPLATE_NAME_PASCAL_CASE}}List:
         return len(self.rows)
 
     def to_dto1_list(self) -> DTO1List:
-        result = DTO1List()
+        data = DTO1List()
 
         for row in self.rows:
-            result.push(row.to_dto1())
+            data.push(row.to_dto1())
 
-        return result
+        return data
 
 
 # ------------------------------------------------------------------

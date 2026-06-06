@@ -75,31 +75,31 @@ func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) Len() int {
 }
 
 func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) ToDTO1List() {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List {
-	var result {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List
+	var data {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List
 
 	for _, row := range t.Rows {
 		if row == nil {
 			continue
 		}
 
-		result.Push(row.ToDTO1())
+		data.Push(row.ToDTO1())
 	}
 
-	return result
+	return data
 }
 
 func New{{TEMPLATE_NAME_PASCAL_CASE}}List(rows ...*{{TEMPLATE_NAME_PASCAL_CASE}}) {{TEMPLATE_NAME_PASCAL_CASE}}List {
-	var result {{TEMPLATE_NAME_PASCAL_CASE}}List
+	var data {{TEMPLATE_NAME_PASCAL_CASE}}List
 
 	for _, row := range rows {
 		if row == nil {
 			continue
 		}
 
-		result.Push(row)
+		data.Push(row)
 	}
 
-	return result
+	return data
 }
 
 // ------------------------------------------------------------------

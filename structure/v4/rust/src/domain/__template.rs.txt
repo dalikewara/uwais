@@ -54,13 +54,13 @@ pub struct {{TEMPLATE_NAME_PASCAL_CASE}}List {
 
 impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
     pub fn new(rows: Vec<{{TEMPLATE_NAME_PASCAL_CASE}}>) -> Self {
-        let mut result = Self::default();
+        let mut data = Self::default();
 
         for row in rows {
-            result.push(row);
+            data.push(row);
         }
 
-        result
+        data
     }
 
     pub fn push(&mut self, row: {{TEMPLATE_NAME_PASCAL_CASE}}) {
@@ -80,13 +80,13 @@ impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
     }
 
     pub fn to_dto1_list(self) -> DTO1List {
-        let mut result = DTO1List::default();
+        let mut data = DTO1List::default();
 
         for row in self.rows {
-            result.push(row.to_dto1())
+            data.push(row.to_dto1())
         }
 
-        result
+        data
     }
 }
 

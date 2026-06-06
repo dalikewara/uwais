@@ -172,13 +172,13 @@ export class ToDoList {
     }
 
     toDTO1List(): DTO1List {
-        let result = new DTO1List();
+        let data = new DTO1List();
 
         for (let i = 0; i < this.len(); i++) {
-            result.push(this.rows[i].toDTO1());
+            data.push(this.rows[i].toDTO1());
         }
 
-        return result;
+        return data;
     }
 }
 

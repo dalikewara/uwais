@@ -29,19 +29,16 @@ type {{TEMPLATE_NAME_PASCAL_CASE}}UseCase interface {}
 //
 // ------------------------------------------------------------------
 
-// {{TEMPLATE_NAME_PASCAL_CASE}} is the main data structure for {{TEMPLATE_NAME_PASCAL_CASE}} data.
 type {{TEMPLATE_NAME_PASCAL_CASE}} struct {}
 
 func (t *{{TEMPLATE_NAME_PASCAL_CASE}}) ToDTO1() {{TEMPLATE_NAME_PASCAL_CASE}}DTO1 {
 	return {{TEMPLATE_NAME_PASCAL_CASE}}DTO1{}
 }
 
-// New{{TEMPLATE_NAME_PASCAL_CASE}} creates a new `{{TEMPLATE_NAME_PASCAL_CASE}}`.
 func New{{TEMPLATE_NAME_PASCAL_CASE}}() *{{TEMPLATE_NAME_PASCAL_CASE}} {
 	return &{{TEMPLATE_NAME_PASCAL_CASE}}{}
 }
 
-// {{TEMPLATE_NAME_PASCAL_CASE}}List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
 type {{TEMPLATE_NAME_PASCAL_CASE}}List struct {
 	Rows []*{{TEMPLATE_NAME_PASCAL_CASE}}
 
@@ -91,7 +88,6 @@ func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) ToDTO1List() {{TEMPLATE_NAME_PASCAL_
 	return result
 }
 
-// New{{TEMPLATE_NAME_PASCAL_CASE}}List creates a new collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
 func New{{TEMPLATE_NAME_PASCAL_CASE}}List(rows ...*{{TEMPLATE_NAME_PASCAL_CASE}}) {{TEMPLATE_NAME_PASCAL_CASE}}List {
 	var result {{TEMPLATE_NAME_PASCAL_CASE}}List
 
@@ -115,11 +111,8 @@ func New{{TEMPLATE_NAME_PASCAL_CASE}}List(rows ...*{{TEMPLATE_NAME_PASCAL_CASE}}
 //
 // ------------------------------------------------------------------
 
-// {{TEMPLATE_NAME_PASCAL_CASE}}DTO1 is a data transfer version of `{{TEMPLATE_NAME_PASCAL_CASE}}`,
-// containing only the data that will be sent out (e.g., to the frontend).
 type {{TEMPLATE_NAME_PASCAL_CASE}}DTO1 struct {}
 
-// {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}DTO1` items.
 type {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List struct {
 	Rows []{{TEMPLATE_NAME_PASCAL_CASE}}DTO1
 
@@ -139,7 +132,6 @@ func (t *{{TEMPLATE_NAME_PASCAL_CASE}}DTO1List) Push(row {{TEMPLATE_NAME_PASCAL_
 //
 // ------------------------------------------------------------------
 
-// {{TEMPLATE_NAME_PASCAL_CASE}}QueryFilter holds the parameters for data searches.
 type {{TEMPLATE_NAME_PASCAL_CASE}}QueryFilter struct {}
 
 // ------------------------------------------------------------------
@@ -150,5 +142,4 @@ type {{TEMPLATE_NAME_PASCAL_CASE}}QueryFilter struct {}
 //
 // ------------------------------------------------------------------
 
-// {{TEMPLATE_NAME_PASCAL_CASE}}InputGetAll is the input data for retrieving {{TEMPLATE_NAME_PASCAL_CASE}} list.
 type {{TEMPLATE_NAME_PASCAL_CASE}}InputGetAll struct {}

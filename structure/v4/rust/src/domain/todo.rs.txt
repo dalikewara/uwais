@@ -45,9 +45,6 @@ pub trait UseCase: Send + Sync {
 //
 // ------------------------------------------------------------------
 
-/// ToDo is the main data structure for storing task data.
-/// The `id` is for identification, the `title` is for the title,
-/// and `created_at` and `updated_at` track when it was created and updated.
 #[derive(Default, Clone)]
 pub struct ToDo {
     pub id: i64,
@@ -100,7 +97,6 @@ impl ToDo {
     }
 }
 
-/// ToDoList is a collection of `ToDo` items.
 #[derive(Default)]
 pub struct ToDoList {
     pub rows: Vec<ToDo>,
@@ -155,9 +151,6 @@ impl ToDoList {
 //
 // ------------------------------------------------------------------
 
-/// DTO1 is a data transfer version of `ToDo`,
-/// containing only the data that will be sent out (e.g., to the frontend).
-/// Note that `created_at` and `updated_at` are now strings, not `DateTime` anymore.
 #[derive(Default, Serialize)]
 pub struct DTO1 {
     pub id: i64,
@@ -166,7 +159,6 @@ pub struct DTO1 {
     pub updated_at: String,
 }
 
-/// DTO1List is a collection of `DTO1` items.
 #[derive(Default, Serialize)]
 pub struct DTO1List {
     pub rows: Vec<DTO1>,
@@ -189,7 +181,6 @@ impl DTO1List {
 //
 // ------------------------------------------------------------------
 
-/// QueryFilter holds the parameters for data searches.
 #[derive(Default)]
 pub struct QueryFilter {
     pub id: Option<i64>,
@@ -218,21 +209,18 @@ impl QueryFilter {
 //
 // ------------------------------------------------------------------
 
-/// InputGetAll is the input data for retrieving todos.
 #[derive(Default, Deserialize)]
 #[serde(default)]
 pub struct InputGetAll {
     pub limit: i32,
 }
 
-/// InputAdd is the input data for adding a new todo.
 #[derive(Default, Deserialize)]
 #[serde(default)]
 pub struct InputAdd {
     pub title: String,
 }
 
-/// InputEdit is the input data for updating an existing todo.
 #[derive(Default, Deserialize)]
 #[serde(default)]
 pub struct InputEdit {
@@ -240,7 +228,6 @@ pub struct InputEdit {
     pub title: String,
 }
 
-/// InputRemove is the input data for deleting a todo.
 #[derive(Default, Deserialize)]
 #[serde(default)]
 pub struct InputRemove {

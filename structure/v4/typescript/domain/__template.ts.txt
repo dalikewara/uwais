@@ -38,8 +38,6 @@ export interface UseCase {}
 // ------------------------------------------------------------------
 
 /**
- * {{TEMPLATE_NAME_PASCAL_CASE}} is the main data structure for {{TEMPLATE_NAME_PASCAL_CASE}} data.
- *
  * @class
  */
 export class {{TEMPLATE_NAME_PASCAL_CASE}} {
@@ -53,8 +51,6 @@ export class {{TEMPLATE_NAME_PASCAL_CASE}} {
 }
 
 /**
- * {{TEMPLATE_NAME_PASCAL_CASE}}List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
- *
  * @class
  */
 export class {{TEMPLATE_NAME_PASCAL_CASE}}List {
@@ -114,9 +110,6 @@ export class {{TEMPLATE_NAME_PASCAL_CASE}}List {
 // ------------------------------------------------------------------
 
 /**
- * DTO1 is a data transfer version of `{{TEMPLATE_NAME_PASCAL_CASE}}`,
- * containing only the data that will be sent out (e.g., to the frontend).
- *
  * @class
  */
 export class DTO1 {
@@ -126,8 +119,6 @@ export class DTO1 {
 }
 
 /**
- * DTO1List is a collection of `DTO1` items.
- *
  * @class
  */
 export class DTO1List {
@@ -156,8 +147,6 @@ export class DTO1List {
 // ------------------------------------------------------------------
 
 /**
- * QueryFilter holds the parameters for data searches.
- *
  * @class
  */
 export class QueryFilter {}
@@ -171,8 +160,6 @@ export class QueryFilter {}
 // ------------------------------------------------------------------
 
 /**
- * InputGetAll is the input data for retrieving {{TEMPLATE_NAME_PASCAL_CASE}} list.
- *
  * @class
  */
 export class InputGetAll {

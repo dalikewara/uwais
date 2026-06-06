@@ -124,12 +124,6 @@ class UseCase(ABC):
 #
 # ------------------------------------------------------------------
 class ToDo:
-    """
-    ToDo is the main data structure for storing task data.
-    The `id` is for identification, the `title` is for the title,
-    and `create_at` and `updated_at` track when it was created and updated.
-    """
-
     def __init__(self, title: str):
         time_now = datetime.now()
 
@@ -165,10 +159,6 @@ class ToDo:
 
 
 class ToDoList:
-    """
-    ToDoList is a collection of `ToDo` items.
-    """
-
     def __init__(self, rows: List[ToDo] | None = None):
         self.rows: list[ToDo] = []
 
@@ -217,12 +207,6 @@ class ToDoList:
 
 
 class DTO1(BaseModel):
-    """
-    DTO1 is a data transfer version of `ToDo`,
-    containing only the data that will be sent out (e.g., to the frontend).
-    Note that `created_at` and `updated_at` are now strings, not `datetime` anymore.
-    """
-
     id: int = 0
     title: str = ""
     created_at: str = ""
@@ -230,10 +214,6 @@ class DTO1(BaseModel):
 
 
 class DTO1List:
-    """
-    DTO1List is a collection of `DTO1` items.
-    """
-
     def __init__(self, rows: List[DTO1] | None = None):
         self.rows: list[DTO1] = []
 
@@ -259,10 +239,6 @@ class DTO1List:
 
 
 class QueryFilter:
-    """
-    QueryFilter holds the parameters for data searches.
-    """
-
     def __init__(self):
         self.id: int | None = None
         self.limit: int = 0
@@ -288,33 +264,17 @@ class QueryFilter:
 
 
 class InputGetAll(BaseModel):
-    """
-    InputGetAll is the input data for retrieving todos.
-    """
-
     limit: int = Field(default=0)
 
 
 class InputAdd(BaseModel):
-    """
-    InputAdd is the input data for adding a new todo.
-    """
-
     title: str = Field(..., min_length=1, max_length=255)
 
 
 class InputEdit(BaseModel):
-    """
-    InputEdit is the input data for updating an existing todo.
-    """
-
     id: int = Field(..., ge=1)
     title: str = Field(..., min_length=1, max_length=255)
 
 
 class InputRemove(BaseModel):
-    """
-    InputRemove is the input data for deleting a todo.
-    """
-
     id: int = Field(..., ge=1)

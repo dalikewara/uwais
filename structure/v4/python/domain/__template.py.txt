@@ -41,10 +41,6 @@ class UseCase(ABC):
 #
 # ------------------------------------------------------------------
 class {{TEMPLATE_NAME_PASCAL_CASE}}:
-    """
-    {{TEMPLATE_NAME_PASCAL_CASE}} is the main data structure for {{TEMPLATE_NAME_PASCAL_CASE}} data.
-    """
-
     def __init__(self):
         return
 
@@ -53,10 +49,6 @@ class {{TEMPLATE_NAME_PASCAL_CASE}}:
 
 
 class {{TEMPLATE_NAME_PASCAL_CASE}}List:
-    """
-    {{TEMPLATE_NAME_PASCAL_CASE}}List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
-    """
-
     def __init__(self, rows: List[{{TEMPLATE_NAME_PASCAL_CASE}}] | None = None):
         self.rows: list[{{TEMPLATE_NAME_PASCAL_CASE}}] = []
 
@@ -105,17 +97,10 @@ class {{TEMPLATE_NAME_PASCAL_CASE}}List:
 
 
 class DTO1(BaseModel):
-    """
-    DTO1 is a data transfer version of `{{TEMPLATE_NAME_PASCAL_CASE}}`,
-    containing only the data that will be sent out (e.g., to the frontend).
-    """
+    pass
 
 
 class DTO1List:
-    """
-    DTO1List is a collection of `DTO1` items.
-    """
-
     def __init__(self, rows: List[DTO1] | None = None):
         self.rows: list[DTO1] = []
 
@@ -140,10 +125,6 @@ class DTO1List:
 
 
 class QueryFilter:
-    """
-    QueryFilter holds the parameters for data searches.
-    """
-
     def __init__(self):
         return
 
@@ -158,6 +139,4 @@ class QueryFilter:
 
 
 class InputGetAll(BaseModel):
-    """
-    InputGetAll is the input data for retrieving {{TEMPLATE_NAME_PASCAL_CASE}} list.
-    """
+    pass

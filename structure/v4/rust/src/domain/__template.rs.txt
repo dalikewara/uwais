@@ -32,7 +32,6 @@ pub trait UseCase: Send + Sync {}
 //
 // ------------------------------------------------------------------
 
-/// {{TEMPLATE_NAME_PASCAL_CASE}} is the main data structure for {{TEMPLATE_NAME_PASCAL_CASE}} data.
 #[derive(Default, Clone)]
 pub struct {{TEMPLATE_NAME_PASCAL_CASE}} {}
 
@@ -46,7 +45,6 @@ impl {{TEMPLATE_NAME_PASCAL_CASE}} {
     }
 }
 
-/// {{TEMPLATE_NAME_PASCAL_CASE}}List is a collection of `{{TEMPLATE_NAME_PASCAL_CASE}}` items.
 #[derive(Default)]
 pub struct {{TEMPLATE_NAME_PASCAL_CASE}}List {
     pub rows: Vec<{{TEMPLATE_NAME_PASCAL_CASE}}>,
@@ -101,12 +99,9 @@ impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
 //
 // ------------------------------------------------------------------
 
-/// DTO1 is a data transfer version of `{{TEMPLATE_NAME_PASCAL_CASE}}`,
-/// containing only the data that will be sent out (e.g., to the frontend).
 #[derive(Default, Serialize)]
 pub struct DTO1 {}
 
-/// DTO1List is a collection of `DTO1` items.
 #[derive(Default, Serialize)]
 pub struct DTO1List {
     pub rows: Vec<DTO1>,
@@ -128,7 +123,6 @@ impl DTO1List {
 //
 // ------------------------------------------------------------------
 
-/// QueryFilter holds the parameters for data searches.
 #[derive(Default)]
 pub struct QueryFilter {}
 
@@ -140,7 +134,6 @@ pub struct QueryFilter {}
 //
 // ------------------------------------------------------------------
 
-/// InputGetAll is the input data for retrieving {{TEMPLATE_NAME_PASCAL_CASE}} list.
 #[derive(Default, Deserialize)]
 #[serde(default)]
 pub struct InputGetAll {}

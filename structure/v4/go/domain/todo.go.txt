@@ -46,9 +46,6 @@ type ToDoUseCase interface {
 //
 // ------------------------------------------------------------------
 
-// ToDo is the main data structure for storing task data.
-// The `ID` is for identification, the `Title` is for the title,
-// and `CreatedAt` and `UpdatedAt` track when it was created and updated.
 type ToDo struct {
 	ID        int64     `json:"id"`
 	Title     string    `json:"json"`
@@ -87,7 +84,6 @@ func (t *ToDo) ToDTO1() ToDoDTO1 {
 	}
 }
 
-// NewToDo creates a new `ToDo`.
 func NewToDo(title string) *ToDo {
 	now := time.Now().UTC()
 
@@ -98,7 +94,6 @@ func NewToDo(title string) *ToDo {
 	}
 }
 
-// ToDoList is a collection of `ToDo` items.
 type ToDoList struct {
 	Rows []*ToDo
 
@@ -148,7 +143,6 @@ func (t *ToDoList) ToDTO1List() ToDoDTO1List {
 	return result
 }
 
-// NewToDoList creates a new collection of `ToDo` items.
 func NewToDoList(rows ...*ToDo) ToDoList {
 	var result ToDoList
 
@@ -172,9 +166,6 @@ func NewToDoList(rows ...*ToDo) ToDoList {
 //
 // ------------------------------------------------------------------
 
-// ToDoDTO1 is a data transfer version of `ToDo`,
-// containing only the data that will be sent out (e.g., to the frontend).
-// Note that `CreatedAt` and `UpdatedAt` are now strings, not `time.Time` anymore.
 type ToDoDTO1 struct {
 	ID        int64  `json:"id"`
 	Title     string `json:"title"`
@@ -182,7 +173,6 @@ type ToDoDTO1 struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
-// ToDoDTO1List is a collection of `ToDoDTO1` items.
 type ToDoDTO1List struct {
 	Rows []ToDoDTO1
 
@@ -203,7 +193,6 @@ func (t *ToDoDTO1List) Push(row ToDoDTO1) {
 //
 // ------------------------------------------------------------------
 
-// ToDoQueryFilter holds the parameters for data searches.
 type ToDoQueryFilter struct {
 	ID    *int64
 	Limit int
@@ -229,23 +218,19 @@ func (t ToDoQueryFilter) WithLimit(limit int) ToDoQueryFilter {
 //
 // ------------------------------------------------------------------
 
-// ToDoInputGetAll is the input data for retrieving todos.
 type ToDoInputGetAll struct {
 	Limit int `query:"limit"`
 }
 
-// ToDoInputAdd is the input data for adding a new todo.
 type ToDoInputAdd struct {
 	Title string `json:"title"`
 }
 
-// ToDoInputEdit is the input data for updating an existing todo.
 type ToDoInputEdit struct {
 	ID    int64  `json:"id"`
 	Title string `json:"title"`
 }
 
-// ToDoInputRemove is the input data for deleting a todo.
 type ToDoInputRemove struct {
 	ID int64 `json:"id"`
 }

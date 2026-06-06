@@ -84,10 +84,6 @@ export interface UseCase {
 // ------------------------------------------------------------------
 
 /**
- * ToDo is the main data structure for storing task data.
- * The `id` is for identification, the `title` is for the title,
- * and `created_at` and `updated_at` track when it was created and updated.
- *
  * @class
  */
 export class ToDo {
@@ -137,8 +133,6 @@ export class ToDo {
 }
 
 /**
- * ToDoList is a collection of `ToDo` items.
- *
  * @class
  */
 export class ToDoList {
@@ -198,10 +192,6 @@ export class ToDoList {
 // ------------------------------------------------------------------
 
 /**
- * DTO1 is a data transfer version of `ToDo`,
- * containing only the data that will be sent out (e.g., to the frontend).
- * Note that `created_at` and `updated_at` are now strings, not `Date` anymore.
- *
  * @class
  */
 export class DTO1 {
@@ -216,8 +206,6 @@ export class DTO1 {
 }
 
 /**
- * DTO1List is a collection of `DTO1` items.
- *
  * @class
  */
 export class DTO1List {
@@ -247,8 +235,6 @@ export class DTO1List {
 // ------------------------------------------------------------------
 
 /**
- * QueryFilter holds the parameters for data searches.
- *
  * @class
  */
 export class QueryFilter {
@@ -277,8 +263,6 @@ export class QueryFilter {
 // ------------------------------------------------------------------
 
 /**
- * InputGetAll is the input data for retrieving todos.
- *
  * @class
  */
 export class InputGetAll {
@@ -293,8 +277,6 @@ export class InputGetAll {
 }
 
 /**
- * InputAdd is the input data for adding a new todo.
- *
  * @class
  */
 export class InputAdd {
@@ -309,8 +291,6 @@ export class InputAdd {
 }
 
 /**
- * InputEdit is the input data for updating an existing todo.
- *
  * @class
  */
 export class InputEdit {
@@ -326,8 +306,6 @@ export class InputEdit {
 }
 
 /**
- * InputRemove is the input data for deleting a todo.
- *
  * @class
  */
 export class InputRemove {

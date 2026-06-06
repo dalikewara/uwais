@@ -1,7 +1,7 @@
 const { UseCase, Repository } = require('../../domain/{{TEMPLATE_NAME}}');
 
 /**
- * UseCaseV1 is a basic business logic implementation of the `UseCase` blueprint.
+ * UseCaseV1 is a business logic implementation of the `UseCase` blueprint.
  * It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
  * Its job is to orchestrate the steps needed to complete a user action.
  *

@@ -2,7 +2,7 @@ package {{TEMPLATE_NAME}}
 
 import "{{MODULE_NAME}}/domain"
 
-// useCaseV1 is a basic business logic implementation of the `domain.{{TEMPLATE_NAME_PASCAL_CASE}}UseCase` interface.
+// useCaseV1 is a business logic implementation of the `domain.{{TEMPLATE_NAME_PASCAL_CASE}}UseCase` interface.
 // It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
 // Its job is to orchestrate the steps needed to complete a user action.
 type useCaseV1 struct {

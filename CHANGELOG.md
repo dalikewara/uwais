@@ -2,7 +2,7 @@
 
 ## 2026
 
-- **v2.1.0 - v2.1.2** (2026-05-30 - 2026-06-06)
+- **v2.1.0 - v2.1.3** (2026-05-30 - 2026-06-06)
   - Fix windows installer
   - Remove unecessary comments
 

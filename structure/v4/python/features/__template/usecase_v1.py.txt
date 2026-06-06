@@ -3,7 +3,7 @@ from domain.{{TEMPLATE_NAME}} import UseCase, Repository
 
 class UseCaseV1(UseCase):
     """
-    UseCaseV1 is a basic business logic implementation of the `UseCase` blueprint.
+    UseCaseV1 is a business logic implementation of the `UseCase` blueprint.
     It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
     Its job is to orchestrate the steps needed to complete a user action.
     """

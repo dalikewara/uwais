@@ -39,7 +39,9 @@ impl {{TEMPLATE_NAME_PASCAL_CASE}} {
     pub fn new() -> Self {
         Self::default()
     }
+}
 
+impl {{TEMPLATE_NAME_PASCAL_CASE}} {
     pub fn to_dto1(self) -> DTO1 {
         DTO1 {}
     }
@@ -62,7 +64,9 @@ impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
 
         data
     }
+}
 
+impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
     pub fn push(&mut self, row: {{TEMPLATE_NAME_PASCAL_CASE}}) {
         self.rows.push(row);
     }
@@ -79,6 +83,12 @@ impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
         self.rows.len()
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.rows.is_empty()
+    }
+}
+
+impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
     pub fn to_dto1_list(self) -> DTO1List {
         let mut data = DTO1List::default();
 
@@ -136,4 +146,4 @@ pub struct QueryFilter {}
 
 #[derive(Default, Deserialize)]
 #[serde(default)]
-pub struct InputGetAll {}
+pub struct InputExample {}

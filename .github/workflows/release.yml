@@ -112,15 +112,8 @@ jobs:
         run: echo UWAIS_VERSION=$(grep '^version' Cargo.toml | head -n1 | cut -d '"' -f2) >> $GITHUB_ENV
 
       - name: Install Inno Setup
-        shell: powershell
-        run: |
-          Invoke-WebRequest -Uri https://jrsoftware.org/download.php/is.exe -OutFile is.exe
-          Start-Process -Wait -FilePath .\is.exe -ArgumentList '/VERYSILENT', '/NORESTART', '/SP-', '/DIR="C:\Program Files (x86)\Inno Setup 6"'
-
-      - name: Add Inno Setup to PATH
-        shell: powershell
-        run: |
-          echo "C:\Program Files (x86)\Inno Setup 6" | Out-File -Append $env:GITHUB_PATH
+        shell: cmd
+        run: choco install innosetup --no-progress
 
       - name: Generate installer.iss
         shell: cmd

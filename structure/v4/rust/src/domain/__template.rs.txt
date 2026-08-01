@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 pub trait Repository: Send + Sync {}
 
 /// UseCase is the blueprint for the business logic.
-/// All the business rules for {{TEMPLATE_NAME_PASCAL_CASE}} operations are here, such as how to add, edit, or retrieve data.
+/// All the business rules and operations are here, such as how to add, edit, or retrieve data.
 /// It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
 #[async_trait]
 pub trait UseCase: Send + Sync {}
@@ -28,34 +28,34 @@ pub trait UseCase: Send + Sync {}
 // Model
 // ------------------------------------------------------------------
 //
-// This model is the representation of {{TEMPLATE_NAME_PASCAL_CASE}} data.
+// Model is a representation of the business model data or entity.
 //
 // ------------------------------------------------------------------
 
 #[derive(Default, Clone)]
-pub struct {{TEMPLATE_NAME_PASCAL_CASE}} {}
+pub struct Model {}
 
-impl {{TEMPLATE_NAME_PASCAL_CASE}} {
+impl Model {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl {{TEMPLATE_NAME_PASCAL_CASE}} {
+impl Model {
     pub fn to_dto1(self) -> DTO1 {
         DTO1 {}
     }
 }
 
 #[derive(Default)]
-pub struct {{TEMPLATE_NAME_PASCAL_CASE}}List {
-    pub rows: Vec<{{TEMPLATE_NAME_PASCAL_CASE}}>,
+pub struct ModelList {
+    pub rows: Vec<Model>,
     // By using this style, you can add additional properties that might be useful
     // ...
 }
 
-impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
-    pub fn new(rows: Vec<{{TEMPLATE_NAME_PASCAL_CASE}}>) -> Self {
+impl ModelList {
+    pub fn new(rows: Vec<Model>) -> Self {
         let mut data = Self::default();
 
         for row in rows {
@@ -66,16 +66,16 @@ impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
     }
 }
 
-impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
-    pub fn push(&mut self, row: {{TEMPLATE_NAME_PASCAL_CASE}}) {
+impl ModelList {
+    pub fn push(&mut self, row: Model) {
         self.rows.push(row);
     }
 
-    pub fn first(&self) -> Option<&{{TEMPLATE_NAME_PASCAL_CASE}}> {
+    pub fn first(&self) -> Option<&Model> {
         self.rows.first()
     }
 
-    pub fn last(&self) -> Option<&{{TEMPLATE_NAME_PASCAL_CASE}}> {
+    pub fn last(&self) -> Option<&Model> {
         self.rows.last()
     }
 
@@ -88,7 +88,7 @@ impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
     }
 }
 
-impl {{TEMPLATE_NAME_PASCAL_CASE}}List {
+impl ModelList {
     pub fn to_dto1_list(self) -> DTO1List {
         let mut data = DTO1List::default();
 
@@ -146,4 +146,4 @@ pub struct QueryFilter {}
 
 #[derive(Default, Deserialize)]
 #[serde(default)]
-pub struct InputExample {}
+pub struct Input {}

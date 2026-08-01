@@ -1,4 +1,4 @@
-from domain.todo import QueryFilter, Repository, ToDo, ToDoList
+from domain.todo import QueryFilter, Repository, Model, ModelList
 
 
 class RepositoryPostgresV1(Repository):
@@ -16,7 +16,7 @@ class RepositoryPostgresV1(Repository):
     def __init__(self) -> None:
         return
 
-    def find_all(self, query_filter: QueryFilter) -> ToDoList:
+    def find_all(self, query_filter: QueryFilter) -> ModelList:
         """
         Raises:
             Exception
@@ -24,18 +24,18 @@ class RepositoryPostgresV1(Repository):
         if query_filter.id is not None:
             for row in mock_todos.rows:
                 if row.id == query_filter.id:
-                    return ToDoList([row])
+                    return ModelList([row])
 
-            return ToDoList()
+            return ModelList()
 
         limit = query_filter.limit
 
         if limit < 1:
             limit = mock_todos.len()
 
-        return ToDoList(mock_todos.rows[:limit])
+        return ModelList(mock_todos.rows[:limit])
 
-    def find_one(self, query_filter: QueryFilter) -> ToDo | None:
+    def find_one(self, query_filter: QueryFilter) -> Model | None:
         """
         Raises:
             Exception
@@ -44,7 +44,7 @@ class RepositoryPostgresV1(Repository):
 
         return result.first()
 
-    def insert(self, data: ToDo) -> None:
+    def insert(self, data: Model) -> None:
         """
         Raises:
             Exception
@@ -60,7 +60,7 @@ class RepositoryPostgresV1(Repository):
 
         mock_todos.push(data)
 
-    def update(self, data: ToDo) -> None:
+    def update(self, data: Model) -> None:
         """
         Raises:
             Exception
@@ -75,7 +75,7 @@ class RepositoryPostgresV1(Repository):
                 mock_todos.rows[i] = data
                 break
 
-    def delete(self, data: ToDo) -> None:
+    def delete(self, data: Model) -> None:
         """
         Raises:
             Exception
@@ -83,7 +83,7 @@ class RepositoryPostgresV1(Repository):
         if data.id < 1:
             raise Exception("Cannot delete empty data")
 
-        filtered = ToDoList()
+        filtered = ModelList()
 
         for row in mock_todos.rows:
             if row.id != data.id:
@@ -101,12 +101,12 @@ class RepositoryPostgresV1(Repository):
 #
 # ------------------------------------------------------------------
 
-mock_todos = ToDoList(
+mock_todos = ModelList(
     [
-        ToDo("Task 1").with_id(1),
-        ToDo("Task 2").with_id(2),
-        ToDo("Task 3").with_id(3),
-        ToDo("Task 4").with_id(4),
-        ToDo("Task 5").with_id(5),
+        Model("Task 1").with_id(1),
+        Model("Task 2").with_id(2),
+        Model("Task 3").with_id(3),
+        Model("Task 4").with_id(4),
+        Model("Task 5").with_id(5),
     ]
 )

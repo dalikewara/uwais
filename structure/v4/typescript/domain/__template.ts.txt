@@ -21,7 +21,7 @@ export interface Repository {}
 
 /**
  * UseCase is the blueprint for the business logic.
- * All the business rules for {{TEMPLATE_NAME_PASCAL_CASE}} operations are here, such as how to add, edit, or retrieve data.
+ * All the business rules and operations are here, such as how to add, edit, or retrieve data.
  * It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
  *
  * @interface
@@ -33,14 +33,14 @@ export interface UseCase {}
 // Model
 // ------------------------------------------------------------------
 //
-// This model is the representation of {{TEMPLATE_NAME_PASCAL_CASE}} data.
+// Model is a representation of the business model data or entity.
 //
 // ------------------------------------------------------------------
 
 /**
  * @class
  */
-export class {{TEMPLATE_NAME_PASCAL_CASE}} {
+export class Model {
     constructor() {
         return;
     }
@@ -53,23 +53,23 @@ export class {{TEMPLATE_NAME_PASCAL_CASE}} {
 /**
  * @class
  */
-export class {{TEMPLATE_NAME_PASCAL_CASE}}List {
-    rows: {{TEMPLATE_NAME_PASCAL_CASE}}[] = [];
+export class ModelList {
+    rows: Model[] = [];
 
     // By using this style, you can add additional properties that might be useful
     // ...
 
-    constructor(rows: {{TEMPLATE_NAME_PASCAL_CASE}}[] = []) {
+    constructor(rows: Model[] = []) {
         for (let i = 0; i < rows.length; i++) {
             this.push(rows[i]);
         }
     }
 
-    push(row: {{TEMPLATE_NAME_PASCAL_CASE}}): void {
+    push(row: Model): void {
         this.rows.push(row);
     }
 
-    first(): {{TEMPLATE_NAME_PASCAL_CASE}} | null {
+    first(): Model | null {
         if (this.len() < 1) {
             return null
         }
@@ -77,7 +77,7 @@ export class {{TEMPLATE_NAME_PASCAL_CASE}}List {
         return this.rows[0];
     }
 
-    last(): {{TEMPLATE_NAME_PASCAL_CASE}} | null {
+    last(): Model | null {
         if (this.len() < 1) {
             return null
         }
@@ -87,6 +87,10 @@ export class {{TEMPLATE_NAME_PASCAL_CASE}}List {
 
     len(): number {
         return this.rows.length;
+    }
+
+    isEmpty(): boolean {
+        return this.len() < 1;
     }
 
     toDTO1List(): DTO1List {
@@ -162,7 +166,7 @@ export class QueryFilter {}
 /**
  * @class
  */
-export class InputGetAll {
+export class Input {
     /**
      * @throws {TypeError}
      */

@@ -7,7 +7,7 @@ from domain.todo import (
     InputRemove,
     QueryFilter,
     Repository,
-    ToDo,
+    Model,
     UseCase,
 )
 
@@ -40,7 +40,7 @@ class UseCaseV1(UseCase):
         Raises:
             Exception
         """
-        todo = ToDo(title=inpt.title)
+        todo = Model(title=inpt.title)
 
         self.todo_repository.insert(todo)
 

@@ -1,8 +1,8 @@
 use async_trait::async_trait;
 
-use crate::domain::todo as domain_todo;
+use crate::domain::todo::{Model, ModelList, Repository, QueryFilter};
 
-/// Impl is a basic implementation of the `domain::todo::Repository` trait that
+/// Impl is a basic implementation of the `Repository` trait that
 /// simulates a connection to a Postgres database.
 ///
 /// Note: This layer simulates Postgres database access for demonstration and testing purposes.
@@ -19,21 +19,21 @@ impl Impl {
 }
 
 #[async_trait]
-impl domain_todo::Repository for Impl {
+impl Repository for Impl {
     async fn find_all(
         &self,
-        query_filter: domain_todo::QueryFilter,
-    ) -> Result<domain_todo::ToDoList, String> {
+        query_filter: QueryFilter,
+    ) -> Result<ModelList, String> {
         let mock_todos = MOCK_TODOS.lock().unwrap();
 
         if let Some(id) = query_filter.id {
             for row in &mock_todos.rows {
                 if row.id == id {
-                    return Ok(domain_todo::ToDoList::new(vec![row.clone()]));
+                    return Ok(ModelList::new(vec![row.clone()]));
                 }
             }
 
-            return Ok(domain_todo::ToDoList::default());
+            return Ok(ModelList::default());
         }
 
         let mut limit = query_filter.limit as usize;
@@ -41,22 +41,22 @@ impl domain_todo::Repository for Impl {
             limit = mock_todos.len();
         }
 
-        Ok(domain_todo::ToDoList::new(
+        Ok(ModelList::new(
             mock_todos.rows.iter().take(limit).cloned().collect(),
         ))
     }
 
     async fn find_one(
         &self,
-        query_filter: domain_todo::QueryFilter,
-    ) -> Result<Option<domain_todo::ToDo>, String> {
+        query_filter: QueryFilter,
+    ) -> Result<Option<Model>, String> {
         match self.find_all(query_filter).await {
             Ok(rows) => Ok(rows.first().cloned()),
             Err(err) => Err(err),
         }
     }
 
-    async fn insert(&self, data: &mut domain_todo::ToDo) -> Result<(), String> {
+    async fn insert(&self, data: &mut Model) -> Result<(), String> {
         if data.title.is_empty() {
             return Err(String::from("Cannot insert empty data"));
         }
@@ -73,7 +73,7 @@ impl domain_todo::Repository for Impl {
         Ok(())
     }
 
-    async fn update(&self, data: &mut domain_todo::ToDo) -> Result<(), String> {
+    async fn update(&self, data: &mut Model) -> Result<(), String> {
         if data.id < 1 || data.title.is_empty() {
             return Err(String::from("Cannot update empty data"));
         }
@@ -92,7 +92,7 @@ impl domain_todo::Repository for Impl {
         Ok(())
     }
 
-    async fn delete(&self, data: &domain_todo::ToDo) -> Result<(), String> {
+    async fn delete(&self, data: &Model) -> Result<(), String> {
         if data.id < 1 {
             return Err(String::from("Cannot delete empty data"));
         }
@@ -117,13 +117,13 @@ impl domain_todo::Repository for Impl {
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
 
-static MOCK_TODOS: Lazy<Mutex<domain_todo::ToDoList>> = Lazy::new(|| {
-    let todos = domain_todo::ToDoList::new(vec![
-        domain_todo::ToDo::new("Task 1".to_string()).with_id(1),
-        domain_todo::ToDo::new("Task 2".to_string()).with_id(2),
-        domain_todo::ToDo::new("Task 3".to_string()).with_id(3),
-        domain_todo::ToDo::new("Task 4".to_string()).with_id(4),
-        domain_todo::ToDo::new("Task 5".to_string()).with_id(5),
+static MOCK_TODOS: Lazy<Mutex<ModelList>> = Lazy::new(|| {
+    let todos = ModelList::new(vec![
+        Model::new("Task 1".to_string()).with_id(1),
+        Model::new("Task 2".to_string()).with_id(2),
+        Model::new("Task 3".to_string()).with_id(3),
+        Model::new("Task 4".to_string()).with_id(4),
+        Model::new("Task 5".to_string()).with_id(5),
     ]);
 
     Mutex::new(todos)

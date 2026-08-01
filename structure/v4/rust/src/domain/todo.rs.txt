@@ -18,15 +18,15 @@ use serde::{Deserialize, Serialize};
 /// This allows the data sources to be changed without altering the business logic.
 #[async_trait]
 pub trait Repository: Send + Sync {
-    async fn find_all(&self, query_filter: QueryFilter) -> Result<ToDoList, String>;
-    async fn find_one(&self, query_filter: QueryFilter) -> Result<Option<ToDo>, String>;
-    async fn insert(&self, data: &mut ToDo) -> Result<(), String>;
-    async fn update(&self, data: &mut ToDo) -> Result<(), String>;
-    async fn delete(&self, data: &ToDo) -> Result<(), String>;
+    async fn find_all(&self, query_filter: QueryFilter) -> Result<ModelList, String>;
+    async fn find_one(&self, query_filter: QueryFilter) -> Result<Option<Model>, String>;
+    async fn insert(&self, data: &mut Model) -> Result<(), String>;
+    async fn update(&self, data: &mut Model) -> Result<(), String>;
+    async fn delete(&self, data: &Model) -> Result<(), String>;
 }
 
 /// UseCase is the blueprint for the business logic.
-/// All the business rules for todo operations are here, such as how to add, edit, or retrieve data.
+/// All the business rules and operations are here, such as how to add, edit, or retrieve data.
 /// It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
 #[async_trait]
 pub trait UseCase: Send + Sync {
@@ -40,20 +40,19 @@ pub trait UseCase: Send + Sync {
 // Model
 // ------------------------------------------------------------------
 //
-// This model is the representation of todo data.
-// It stores data and has methods (functions) to process the data itself.
+// Model is a representation of the business model data or entity.
 //
 // ------------------------------------------------------------------
 
 #[derive(Default, Clone)]
-pub struct ToDo {
+pub struct Model {
     pub id: i64,
     pub title: String,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
 
-impl ToDo {
+impl Model {
     pub fn new(title: String) -> Self {
         let now = Utc::now();
 
@@ -63,6 +62,12 @@ impl ToDo {
             updated_at: now,
             ..Self::default()
         }
+    }
+
+    pub fn with_id(mut self, id: i64) -> Self {
+        self.id = id;
+
+        self
     }
 
     pub fn set_created_at_now(&mut self) {
@@ -81,12 +86,6 @@ impl ToDo {
         self.updated_at.to_rfc3339()
     }
 
-    pub fn with_id(mut self, id: i64) -> Self {
-        self.id = id;
-
-        self
-    }
-
     pub fn to_dto1(self) -> DTO1 {
         DTO1 {
             id: self.id,
@@ -98,14 +97,14 @@ impl ToDo {
 }
 
 #[derive(Default)]
-pub struct ToDoList {
-    pub rows: Vec<ToDo>,
+pub struct ModelList {
+    pub rows: Vec<Model>,
     // By using this style, you can add additional properties that might be useful
     // ...
 }
 
-impl ToDoList {
-    pub fn new(rows: Vec<ToDo>) -> Self {
+impl ModelList {
+    pub fn new(rows: Vec<Model>) -> Self {
         let mut data = Self::default();
 
         for row in rows {
@@ -115,15 +114,15 @@ impl ToDoList {
         data
     }
 
-    pub fn push(&mut self, row: ToDo) {
+    pub fn push(&mut self, row: Model) {
         self.rows.push(row);
     }
 
-    pub fn first(&self) -> Option<&ToDo> {
+    pub fn first(&self) -> Option<&Model> {
         self.rows.first()
     }
 
-    pub fn last(&self) -> Option<&ToDo> {
+    pub fn last(&self) -> Option<&Model> {
         self.rows.last()
     }
 
@@ -177,7 +176,6 @@ impl DTO1List {
 // ------------------------------------------------------------------
 //
 // This is a data structure for filtering or searching data.
-// For example, to search for a todo with a specific `id`.
 //
 // ------------------------------------------------------------------
 

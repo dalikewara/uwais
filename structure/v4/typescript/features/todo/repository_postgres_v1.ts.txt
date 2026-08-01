@@ -1,4 +1,4 @@
-import { Repository, ToDo, ToDoList, QueryFilter } from '@domain/todo';
+import { Repository, Model, ModelList, QueryFilter } from '@domain/todo';
 
 /**
  * RepositoryPostgresV1 is a basic implementation of the `Repository` interface that
@@ -19,32 +19,32 @@ export class RepositoryPostgresV1 implements Repository  {
     /**
      * @throws {Error}
      */
-    async findAll(queryFilter: QueryFilter): Promise<ToDoList> {
+    async findAll(queryFilter: QueryFilter): Promise<ModelList> {
         if (queryFilter.id) {
-            for (let i = 0; i < mockToDoList.len(); i++) {
-                if (mockToDoList.rows[i].id === queryFilter.id) {
-                    return new ToDoList([
-                        mockToDoList.rows[i],
+            for (let i = 0; i < mockModelList.len(); i++) {
+                if (mockModelList.rows[i].id === queryFilter.id) {
+                    return new ModelList([
+                        mockModelList.rows[i],
                     ]);
                 }
             }
 
-            return new ToDoList();
+            return new ModelList();
         }
 
         let limit = queryFilter.limit;
 
         if (limit < 1) {
-            limit = mockToDoList.len();
+            limit = mockModelList.len();
         }
 
-        return new ToDoList(mockToDoList.rows.slice(0, limit));
+        return new ModelList(mockModelList.rows.slice(0, limit));
     }
 
     /**
      * @throws {Error}
      */
-    async findOne(queryFilter: QueryFilter): Promise<ToDo | null> {
+    async findOne(queryFilter: QueryFilter): Promise<Model | null> {
         let result = await this.findAll(queryFilter);
 
         return result.first();
@@ -53,34 +53,34 @@ export class RepositoryPostgresV1 implements Repository  {
     /**
      * @throws {Error}
      */
-    async insert(data: ToDo): Promise<void> {
+    async insert(data: Model): Promise<void> {
         if (data.title === '') {
             throw new Error('Cannot insert empty data');
         }
 
-        let lastData = mockToDoList.last();
+        let lastData = mockModelList.last();
         if (lastData) {
             data.id = lastData.id + 1;
         }
 
         data.setCreatedAtNow();
 
-        mockToDoList.push(data);
+        mockModelList.push(data);
     }
 
     /**
      * @throws {Error}
      */
-    async update(data: ToDo): Promise<void> {
+    async update(data: Model): Promise<void> {
         if (data.id < 1 || data.title === '') {
             throw new Error('Cannot update empty data');
         }
 
         data.setUpdatedAtNow();
 
-        for (let i = 0; i < mockToDoList.len(); i++) {
-            if (mockToDoList.rows[i].id === data.id) {
-                mockToDoList.rows[i] = data;
+        for (let i = 0; i < mockModelList.len(); i++) {
+            if (mockModelList.rows[i].id === data.id) {
+                mockModelList.rows[i] = data;
                 break;
             }
         }
@@ -89,12 +89,12 @@ export class RepositoryPostgresV1 implements Repository  {
     /**
      * @throws {Error}
      */
-    async delete(data: ToDo): Promise<void> {
+    async delete(data: Model): Promise<void> {
         if (data.id < 1) {
             throw new Error('Cannot delete empty data');
         }
 
-        mockToDoList.rows.filter(row => row.id !== data.id);
+        mockModelList.rows.filter(row => row.id !== data.id);
     }
 }
 
@@ -107,10 +107,10 @@ export class RepositoryPostgresV1 implements Repository  {
 //
 // ------------------------------------------------------------------
 
-let mockToDoList: ToDoList = new ToDoList([
-    new ToDo('Task 1').withID(1),
-    new ToDo('Task 2').withID(2),
-    new ToDo('Task 3').withID(3),
-    new ToDo('Task 4').withID(4),
-    new ToDo('Task 5').withID(5),
+let mockModelList: ModelList = new ModelList([
+    new Model('Task 1').withID(1),
+    new Model('Task 2').withID(2),
+    new Model('Task 3').withID(3),
+    new Model('Task 4').withID(4),
+    new Model('Task 5').withID(5),
 ]);

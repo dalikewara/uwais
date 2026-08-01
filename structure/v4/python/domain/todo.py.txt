@@ -26,7 +26,7 @@ class Repository(ABC):
     """
 
     @abstractmethod
-    def find_all(self, query_filter: QueryFilter) -> ToDoList:
+    def find_all(self, query_filter: QueryFilter) -> ModelList:
         """
         Raises:
             NotImplementedError: If not implemented.
@@ -35,7 +35,7 @@ class Repository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def find_one(self, query_filter: QueryFilter) -> ToDo | None:
+    def find_one(self, query_filter: QueryFilter) -> Model | None:
         """
         Raises:
             NotImplementedError: If not implemented.
@@ -44,7 +44,7 @@ class Repository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def insert(self, data: ToDo) -> None:
+    def insert(self, data: Model) -> None:
         """
         Raises:
             NotImplementedError: If not implemented.
@@ -53,7 +53,7 @@ class Repository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, data: ToDo) -> None:
+    def update(self, data: Model) -> None:
         """
         Raises:
             NotImplementedError: If not implemented.
@@ -62,7 +62,7 @@ class Repository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, data: ToDo) -> None:
+    def delete(self, data: Model) -> None:
         """
         Raises:
             NotImplementedError: If not implemented.
@@ -74,7 +74,7 @@ class Repository(ABC):
 class UseCase(ABC):
     """
     UseCase is the blueprint for the business logic.
-    All the business rules for `ToDo` operations are here, such as how to add, edit, or retrieve data.
+    All the business rules and operations are here, such as how to add, edit, or retrieve data.
     It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
     """
 
@@ -119,11 +119,10 @@ class UseCase(ABC):
 # Model
 # ------------------------------------------------------------------
 #
-# This model is the representation of `ToDo` data.
-# It stores data and has methods (functions) to process the data itself.
+# Model is a representation of the business model data or entity.
 #
 # ------------------------------------------------------------------
-class ToDo:
+class Model:
     def __init__(self, title: str):
         time_now = datetime.now()
 
@@ -131,6 +130,11 @@ class ToDo:
         self.title: str = title
         self.created_at: datetime = time_now
         self.updated_at: datetime = time_now
+
+    def with_id(self, value: int) -> Model:
+        self.id = value
+
+        return self
 
     def set_created_at_now(self):
         self.created_at = datetime.now()
@@ -144,11 +148,6 @@ class ToDo:
     def get_formatted_updated_at(self) -> str:
         return self.updated_at.isoformat()
 
-    def with_id(self, value: int) -> ToDo:
-        self.id = value
-
-        return self
-
     def to_dto1(self) -> DTO1:
         return DTO1(
             id=self.id,
@@ -158,9 +157,9 @@ class ToDo:
         )
 
 
-class ToDoList:
-    def __init__(self, rows: List[ToDo] | None = None):
-        self.rows: list[ToDo] = []
+class ModelList:
+    def __init__(self, rows: List[Model] | None = None):
+        self.rows: list[Model] = []
 
         # By using this style, you can add additional properties that might be useful
         # ...
@@ -169,16 +168,16 @@ class ToDoList:
             for row in rows:
                 self.push(row)
 
-    def push(self, row: ToDo):
+    def push(self, row: Model):
         self.rows.append(row)
 
-    def first(self) -> ToDo | None:
+    def first(self) -> Model | None:
         if self.len() < 1:
             return None
 
         return self.rows[0]
 
-    def last(self) -> ToDo | None:
+    def last(self) -> Model | None:
         if self.len() < 1:
             return None
 
@@ -233,7 +232,6 @@ class DTO1List:
 # ------------------------------------------------------------------
 #
 # This is a data structure for filtering or searching data.
-# For example, to search for a `ToDo` with a specific `id`.
 #
 # ------------------------------------------------------------------
 

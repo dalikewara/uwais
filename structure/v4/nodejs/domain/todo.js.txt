@@ -21,7 +21,7 @@ class Repository {
     /**
      * @param {QueryFilter} queryFilter
      *
-     * @returns {Promise<ToDoList>}
+     * @returns {Promise<ModelList>}
      * @throws {Error}
      */
     async findAll(queryFilter) {
@@ -31,7 +31,7 @@ class Repository {
     /**
      * @param {QueryFilter} queryFilter
      *
-     * @returns {Promise<ToDo | null>}
+     * @returns {Promise<Model | null>}
      * @throws {Error}
      */
     async findOne(queryFilter) {
@@ -39,7 +39,7 @@ class Repository {
     }
 
     /**
-     * @param {ToDo} data
+     * @param {Model} data
      *
      * @returns {Promise<void>}
      * @throws {Error}
@@ -49,7 +49,7 @@ class Repository {
     }
 
     /**
-     * @param {ToDo} data
+     * @param {Model} data
      *
      * @returns {Promise<void>}
      * @throws {Error}
@@ -59,7 +59,7 @@ class Repository {
     }
 
     /**
-     * @param {ToDo} data
+     * @param {Model} data
      *
      * @returns {Promise<void>}
      * @throws {Error}
@@ -71,7 +71,7 @@ class Repository {
 
 /**
  * UseCase is the blueprint for the business logic.
- * All the business rules for todo operations are here, such as how to add, edit, or retrieve data.
+ * All the business rules and operations are here, such as how to add, edit, or retrieve data.
  * It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
  *
  * @interface
@@ -123,15 +123,14 @@ class UseCase {
 // Model
 // ------------------------------------------------------------------
 //
-// This model is the representation of todo data.
-// It stores data and has methods (functions) to process the data itself.
+// Model is a representation of the business model data or entity.
 //
 // ------------------------------------------------------------------
 
 /**
  * @class
  */
-class ToDo {
+class Model {
     /**
      * @type {number}
      */
@@ -164,6 +163,17 @@ class ToDo {
     }
 
     /**
+     * @param {number} id
+     *
+     * @returns {Model}
+     */
+    withID(id) {
+        this.id = id;
+
+        return this;
+    }
+
+    /**
      * @returns {void}
      */
     setCreatedAtNow() {
@@ -192,17 +202,6 @@ class ToDo {
     }
 
     /**
-     * @param {number} id
-     *
-     * @returns {ToDo}
-     */
-    withID(id) {
-        this.id = id;
-
-        return this;
-    }
-
-    /**
      * @returns {DTO1}
      */
     toDTO1() {
@@ -218,9 +217,9 @@ class ToDo {
 /**
  * @class
  */
-class ToDoList {
+class ModelList {
     /**
-     * @type {ToDo[]}
+     * @type {Model[]}
      */
     rows = [];
 
@@ -228,7 +227,7 @@ class ToDoList {
     // ...
 
     /**
-     * @param {ToDo[]} rows
+     * @param {Model[]} rows
      */
     constructor(rows = []) {
         for (let i = 0; i < rows.length; i++) {
@@ -237,7 +236,7 @@ class ToDoList {
     }
 
     /**
-     * @param {ToDo} row
+     * @param {Model} row
      *
      * @returns {void}
      */
@@ -246,7 +245,7 @@ class ToDoList {
     }
 
     /**
-     * @returns {ToDo | null}
+     * @returns {Model | null}
      */
     first() {
         if (this.len() < 1) {
@@ -257,7 +256,7 @@ class ToDoList {
     }
 
     /**
-     * @returns {ToDo | null}
+     * @returns {Model | null}
      */
     last() {
         if (this.len() < 1) {
@@ -365,7 +364,6 @@ class DTO1List {
 // ------------------------------------------------------------------
 //
 // This is a data structure for filtering or searching data.
-// For example, to search for a todo with a specific `id`.
 //
 // ------------------------------------------------------------------
 
@@ -490,8 +488,8 @@ class InputRemove {
 module.exports = {
     Repository,
     UseCase,
-    ToDo,
-    ToDoList,
+    Model,
+    ModelList,
     DTO1,
     DTO1List,
     QueryFilter,

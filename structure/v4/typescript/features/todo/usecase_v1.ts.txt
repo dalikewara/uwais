@@ -1,4 +1,4 @@
-import { UseCase, Repository, ToDo, DTO1, DTO1List, QueryFilter, InputGetAll, InputAdd, InputEdit, InputRemove } from '@domain/todo';
+import { UseCase, Repository, Model, DTO1, DTO1List, QueryFilter, InputGetAll, InputAdd, InputEdit, InputRemove } from '@domain/todo';
 
 /**
  * UseCaseV1 is a basic business logic implementation of the `UseCase` interface.
@@ -28,7 +28,7 @@ export class UseCaseV1 implements UseCase  {
      * @throws {Error}
      */
     async add(input: InputAdd): Promise<DTO1> {
-        let todo = new ToDo(input.title);
+        let todo = new Model(input.title);
 
         await this.todoRepository.insert(todo);
 

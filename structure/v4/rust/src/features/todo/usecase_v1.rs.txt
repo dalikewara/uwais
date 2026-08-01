@@ -1,47 +1,47 @@
 use async_trait::async_trait;
 use std::sync::Arc;
 
-use crate::domain::todo as domain_todo;
+use crate::domain::todo::{DTO1, DTO1List, InputAdd, InputEdit, InputGetAll, InputRemove, Model, Repository, UseCase, QueryFilter};
 
-/// Impl is a basic business logic implementation of the `domain::todo::UseCase` trait.
+/// Impl is a basic business logic implementation of the `UseCase` trait.
 /// It's the bridge between the delivery layer (like an API handler) and the data layer (the repository).
 /// Its job is to orchestrate the steps needed to complete a user action.
 pub struct Impl {
-    todo_repository: Arc<dyn domain_todo::Repository>,
+    todo_repository: Arc<dyn Repository>,
 }
 
 impl Impl {
-    pub fn new(todo_repository: Arc<dyn domain_todo::Repository>) -> Self {
+    pub fn new(todo_repository: Arc<dyn Repository>) -> Self {
         Self { todo_repository }
     }
 }
 
 #[async_trait]
-impl domain_todo::UseCase for Impl {
+impl UseCase for Impl {
     async fn get_all(
         &self,
-        input: domain_todo::InputGetAll,
-    ) -> Result<domain_todo::DTO1List, String> {
+        input: InputGetAll,
+    ) -> Result<DTO1List, String> {
         let todos = self
             .todo_repository
-            .find_all(domain_todo::QueryFilter::default().with_limit(input.limit))
+            .find_all(QueryFilter::default().with_limit(input.limit))
             .await?;
 
         Ok(todos.to_dto1_list())
     }
 
-    async fn add(&self, input: domain_todo::InputAdd) -> Result<domain_todo::DTO1, String> {
-        let mut todo = domain_todo::ToDo::new(input.title);
+    async fn add(&self, input: InputAdd) -> Result<DTO1, String> {
+        let mut todo = Model::new(input.title);
 
         self.todo_repository.insert(&mut todo).await?;
 
         Ok(todo.to_dto1())
     }
 
-    async fn edit(&self, input: domain_todo::InputEdit) -> Result<domain_todo::DTO1, String> {
+    async fn edit(&self, input: InputEdit) -> Result<DTO1, String> {
         let mut todo = match self
             .todo_repository
-            .find_one(domain_todo::QueryFilter::default().with_id(input.id))
+            .find_one(QueryFilter::default().with_id(input.id))
             .await?
         {
             Some(t) => t,
@@ -55,10 +55,10 @@ impl domain_todo::UseCase for Impl {
         Ok(todo.to_dto1())
     }
 
-    async fn remove(&self, input: domain_todo::InputRemove) -> Result<(), String> {
+    async fn remove(&self, input: InputRemove) -> Result<(), String> {
         let todo = match self
             .todo_repository
-            .find_one(domain_todo::QueryFilter::default().with_id(input.id))
+            .find_one(QueryFilter::default().with_id(input.id))
             .await?
         {
             Some(t) => t,

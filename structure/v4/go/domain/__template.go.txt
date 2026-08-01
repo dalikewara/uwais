@@ -17,7 +17,7 @@ package domain
 type {{TEMPLATE_NAME_PASCAL_CASE}}Repository interface {}
 
 // {{TEMPLATE_NAME_PASCAL_CASE}}UseCase is the blueprint for the business logic.
-// All the business rules for {{TEMPLATE_NAME_PASCAL_CASE}} operations are here, such as how to add, edit, or retrieve data.
+// All the business rules and operations are here, such as how to add, edit, or retrieve data.
 // It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
 type {{TEMPLATE_NAME_PASCAL_CASE}}UseCase interface {}
 
@@ -25,7 +25,7 @@ type {{TEMPLATE_NAME_PASCAL_CASE}}UseCase interface {}
 // Model
 // ------------------------------------------------------------------
 //
-// This model is the representation of {{TEMPLATE_NAME_PASCAL_CASE}} data.
+// Model is a representation of the business model data or entity.
 //
 // ------------------------------------------------------------------
 
@@ -72,6 +72,10 @@ func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) Len() int {
 	}
 
 	return len(t.Rows)
+}
+
+func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) IsEmpty() bool {
+	return t.Len() < 1
 }
 
 func (t *{{TEMPLATE_NAME_PASCAL_CASE}}List) ToDTO1List() {{TEMPLATE_NAME_PASCAL_CASE}}DTO1List {
@@ -142,4 +146,4 @@ type {{TEMPLATE_NAME_PASCAL_CASE}}QueryFilter struct {}
 //
 // ------------------------------------------------------------------
 
-type {{TEMPLATE_NAME_PASCAL_CASE}}InputGetAll struct {}
+type {{TEMPLATE_NAME_PASCAL_CASE}}Input struct {}

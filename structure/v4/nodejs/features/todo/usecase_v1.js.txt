@@ -1,4 +1,4 @@
-const { UseCase, Repository, ToDo, QueryFilter, InputAdd, InputEdit, InputRemove, DTO1, DTO1List } = require('../../domain/todo');
+const { UseCase, Repository, Model, QueryFilter, InputAdd, InputEdit, InputRemove, DTO1, DTO1List } = require('../../domain/todo');
 
 /**
  * UseCaseV1 is a basic business logic implementation of the `UseCase` blueprint.
@@ -34,7 +34,7 @@ class UseCaseV1 extends UseCase  {
      */
     validate() {
         if (!(this.todoRepository instanceof Repository)) {
-            throw new TypeError('`todoRepository` must be an instance of ToDo Repository blueprint');
+            throw new TypeError('`todoRepository` must be an instance of Repository blueprint');
         }
     }
 
@@ -57,7 +57,7 @@ class UseCaseV1 extends UseCase  {
      * @throws {Error}
      */
     async add(input) {
-        let todo = new ToDo(input.title);
+        let todo = new Model(input.title);
 
         await this.todoRepository.insert(todo);
 

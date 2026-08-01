@@ -21,32 +21,32 @@ export interface Repository {
     /**
      * @throws {Error}
      */
-    findAll(queryFilter: QueryFilter): Promise<ToDoList>;
+    findAll(queryFilter: QueryFilter): Promise<ModelList>;
 
     /**
      * @throws {Error}
      */
-    findOne(queryFilter: QueryFilter): Promise<ToDo | null>;
+    findOne(queryFilter: QueryFilter): Promise<Model | null>;
 
     /**
      * @throws {Error}
      */
-    insert(data: ToDo): Promise<void>;
+    insert(data: Model): Promise<void>;
 
     /**
      * @throws {Error}
      */
-    update(data: ToDo): Promise<void>;
+    update(data: Model): Promise<void>;
 
     /**
      * @throws {Error}
      */
-    delete(data: ToDo): Promise<void>;
+    delete(data: Model): Promise<void>;
 }
 
 /**
  * UseCase is the blueprint for the business logic.
- * All the business rules for todo operations are here, such as how to add, edit, or retrieve data.
+ * All the business rules and operations are here, such as how to add, edit, or retrieve data.
  * It doesn't matter where the data is stored or what protocol is used to transport it (HTTP, etc.).
  *
  * @interface
@@ -78,15 +78,14 @@ export interface UseCase {
 // Model
 // ------------------------------------------------------------------
 //
-// This model is the representation of todo data.
-// It stores data and has methods (functions) to process the data itself.
+// Model is a representation of the business model data or entity.
 //
 // ------------------------------------------------------------------
 
 /**
  * @class
  */
-export class ToDo {
+export class Model {
     id: number = 0;
     title: string = '';
     created_at: Date = new Date();
@@ -98,6 +97,12 @@ export class ToDo {
         this.title = title;
         this.created_at = now;
         this.updated_at = now;
+    }
+
+    withID(id: number): Model {
+        this.id = id;
+
+        return this;
     }
 
     setCreatedAtNow(): void {
@@ -116,12 +121,6 @@ export class ToDo {
         return this.updated_at.toISOString();
     }
 
-    withID(id: number): ToDo {
-        this.id = id;
-
-        return this;
-    }
-
     toDTO1(): DTO1 {
         return new DTO1({
             id: this.id,
@@ -135,23 +134,23 @@ export class ToDo {
 /**
  * @class
  */
-export class ToDoList {
-    rows: ToDo[] = [];
+export class ModelList {
+    rows: Model[] = [];
 
     // By using this style, you can add additional properties that might be useful
     // ...
 
-    constructor(rows: ToDo[] = []) {
+    constructor(rows: Model[] = []) {
         for (let i = 0; i < rows.length; i++) {
             this.push(rows[i]);
         }
     }
 
-    push(row: ToDo): void {
+    push(row: Model): void {
         this.rows.push(row);
     }
 
-    first(): ToDo | null {
+    first(): Model | null {
         if (this.len() < 1) {
             return null
         }
@@ -159,7 +158,7 @@ export class ToDoList {
         return this.rows[0];
     }
 
-    last(): ToDo | null {
+    last(): Model | null {
         if (this.len() < 1) {
             return null
         }
@@ -230,7 +229,6 @@ export class DTO1List {
 // ------------------------------------------------------------------
 //
 // This is a data structure for filtering or searching data.
-// For example, to search for a todo with a specific `id`.
 //
 // ------------------------------------------------------------------
 

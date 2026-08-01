@@ -41,7 +41,7 @@ fn print_welcome_banner() {
         "{} {}{}",
         "Welcome to",
         format!("Uwais (v{})", VERSION).bright_white().bold(),
-        "—formerly named AyaPingPing, a project structure generator for building applications that follow Clean Architecture and \
+        "—formerly named AyaPingPing, a project structure generator to build applications that follow Clean Architecture and \
         Feature-Driven Design concept in various programming languages (such as Golang, Python, Typescript, etc.). It aims to be a seamless \
         and very simple project structure while avoiding unnecessary complexity.",
     );
